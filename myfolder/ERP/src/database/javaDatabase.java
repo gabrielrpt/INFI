@@ -59,12 +59,13 @@ public class javaDatabase {
 
     // Create method insertOrder
     public static int insertOrder(String orderNumber, String workPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty) throws SQLException {
-        String SQLQuery = "INSERT INTO " + table + " (orderNumber, workPiece, quantity, dueDate, latePenalty, earlyPenalty) VALUES ('" + orderNumber + "', '" + workPiece + "', " + quantity + ", " + dueDate + ", " + latePenalty + ", " + earlyPenalty + ");";
+        String SQLQuery = "INSERT INTO erpmes." + table + " (ordernumber, workpiece, quantity, duedate, latepen, earlypen) VALUES ('" + orderNumber + "', '" + workPiece + "', " + quantity + ", " + dueDate + ", " + latePenalty + ", " + earlyPenalty + ");";
+        System.out.println(SQLQuery);
         return newEntry(SQLQuery, databaseUrl, user, password);
     }
 
     public static int insertOrderCost(double orderCost) throws SQLException {
-        String SQLQuery = "INSERT INTO " + table + " (orderCost) VALUES ('" + orderCost + "');";
+        String SQLQuery = "INSERT INTO erpmes." + table + " (ordercost) VALUES ('" + orderCost + "');";
         return newEntry(SQLQuery, databaseUrl, user, password);
     }
     public static String getUser() {
