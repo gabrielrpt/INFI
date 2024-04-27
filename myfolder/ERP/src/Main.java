@@ -44,13 +44,13 @@ public class Main {
         Thread orderManagementThread = new Thread(orderManagement::orderManagement);
         orderManagementThread.start();
         // Start the order completion checker in a separate thread
-       /* Thread orderCompletionThread = new Thread(() -> {
+        Thread orderCompletionThread = new Thread(() -> {
                 try {
                     orderManagement.checkOrderCompletion();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
         });
-        orderCompletionThread.start();*/
+        orderCompletionThread.start();
     }
 }

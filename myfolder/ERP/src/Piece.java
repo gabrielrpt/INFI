@@ -1,19 +1,26 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static database.javaDatabase.insertPiece;
 
 public class Piece {
     private final String pieceType;
     private final String rawPiece;
-    private int currentType = 0;
+    private String currentType;
     private int arrivalDate = 0;
     private int dispatchDate = 0;
     private int productionCost = 0;
+    private int orderId = 0;
     private final double rawCost;
     private double pieceCost = 0;
     private static final double DEPRECIATION_RATE = 0.01; // 1% depreciation rate
 
-    public Piece(String pieceType, String rawPiece){
+    public Piece(String pieceType, String rawPiece, int orderId, double rawCost) throws SQLException {
         this.pieceType = pieceType;
         this.rawPiece = rawPiece;
-        this.rawCost = Plans.getBestSupplier(rawPiece, 1);
+        this.orderId = orderId;
+        this.rawCost = rawCost;
+        insertPiece(pieceType, rawPiece, orderId, rawCost);
     }
 
     public double calculatePieceCost(double depreciationCost){
@@ -29,6 +36,15 @@ public class Piece {
         return dispatchDate != 0;
     }
 
+    public void setFromResultSet(ResultSet resultSet) throws SQLException {
+        if (resultSet.next()) {
+            currentType = resultSet.getString("currenttype");
+            arrivalDate = resultSet.getInt("arrivaldate");
+            dispatchDate = resultSet.getInt("dispatchdate");
+            productionCost = resultSet.getInt("productioncost");
+        }
+    }
+
     public void setArrivalDate(int arrivalDate){
         this.arrivalDate = arrivalDate;
     }
@@ -41,7 +57,7 @@ public class Piece {
         this.productionCost = productionCost;
     }
 
-    public void setCurrentType(int currentType){
+    public void setCurrentType(String currentType){
         this.currentType = currentType;
     }
 
@@ -53,11 +69,16 @@ public class Piece {
         return rawPiece;
     }
 
-    public int getCurrentType(){
+    public String getCurrentType(){
         return currentType;
     }
 
     public double getPieceCost(){
+        pieceCost = calculatePieceCost(calculateDepreciationCost());
         return pieceCost;
+    }
+
+    public int getOrderId(){
+        return orderId;
     }
 }

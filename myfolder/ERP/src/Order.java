@@ -1,3 +1,9 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static database.javaDatabase.getPieceByOrderNumber;
+import static database.javaDatabase.getResultSetSize;
+
 // Define the Order class
 public class Order {
     private final String orderNumber;
@@ -11,7 +17,7 @@ public class Order {
 
 
     // Constructor
-    public Order(String orderNumber, String workPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty) {
+    public Order(String orderNumber, String workPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty) throws SQLException {
         this.orderNumber = orderNumber;
         this.workPiece = workPiece;
         this.quantity = quantity;
@@ -23,24 +29,33 @@ public class Order {
     }
 
     //Create a piece object for each piece in the order
-    public void createPieces(){
+    public void createPieces() throws SQLException {
+        String rawPiece = Plans.getRawPiece(Plans.getFastestPathFromAll(Plans.getAllPaths(workPiece)));
+        double rawCost = Plans.getBestSupplier(rawPiece, quantity, dueDate, latePenalty, earlyPenalty);
         for(int i = 0; i < quantity; i++){
-            pieces[i] = new Piece(workPiece, ProductionHierarchy.getRawPiece(workPiece));
+            pieces[i] = new Piece(workPiece, rawPiece, Integer.parseInt(orderNumber), rawCost);
         }
     }
 
     // Check if all pieces are complete
-    public boolean isComplete(){
-        for(Piece piece : pieces){
-            if(!piece.isComplete()) return false;
+    public boolean isComplete() throws SQLException {
+        ResultSet resultSet = getPieceByOrderNumber(orderNumber);
+        if(resultSet == null) return false;
+        if (getResultSetSize(resultSet) == quantity) {
+            for (Piece piece : pieces) {
+                piece.setFromResultSet(resultSet);
+                piece.calculatePieceCost(piece.calculateDepreciationCost());
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     // Calculate the total cost of the order by summing the costs of all pieces when complete
     public void calculateTotalCost(){
         for(Piece piece : pieces){
             totalCost += piece.getPieceCost();
+            System.out.println("Piece cost: " + piece.getPieceCost());
         }
     }
 

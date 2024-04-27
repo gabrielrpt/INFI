@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,18 +44,23 @@ public class OrderManagement {
 
     //Create a method that continuously checks if any order in the arraylist is completed and if so, sends it to the database
     public void checkOrderCompletion() throws SQLException {
-        while (true) {
+        boolean flag = true;
+        //Currently, the method will only check once and then stop
+        while (flag) {
             if (orderList.isEmpty()) {
                 System.out.println("No orders to check.");
-            }else {
-                for (Order order : orderList) {
+            } else {
+                Iterator<Order> iterator = orderList.iterator();
+                while (iterator.hasNext()) {
+                    Order order = iterator.next();
                     System.out.println("Checking order " + order.getOrderNumber() + "...");
                     if (order.isComplete()) {
                         System.out.println("Order " + order.getOrderNumber() + " is completed.");
                         order.calculateTotalCost();
                         // Send order to database
                         insertOrderCost(order.getTotalCost());
-                        orderList.remove(order);
+                        iterator.remove();
+                        flag = false;
                     }
                 }
             }
