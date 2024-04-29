@@ -4,8 +4,11 @@
  */
 package GUI;
 
+import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -24,6 +27,7 @@ public class ProductionPlan extends javax.swing.JFrame {
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
+        startTableShift();
     }
    public void currentDate(){
         Calendar cal= new GregorianCalendar();
@@ -111,9 +115,66 @@ public class ProductionPlan extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    public void startTableShift() {
+        Timer timer = new Timer(60000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                shiftTable();
+            }
+        });
+        timer.start();
+    }
+
+    private void shiftTable() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable5.getModel();
+        int columnCount = model.getColumnCount();
+        int rowCount = model.getRowCount();
+        Object[][] newData = new Object[rowCount][columnCount];
+        String[] newColumnNames = new String[columnCount];
+
+        // Shift data and column names
+        for (int i = 0; i < columnCount - 1; i++) {
+            newColumnNames[i] = model.getColumnName(i + 1);
+            for (int j = 0; j < rowCount; j++) {
+                newData[j][i] = model.getValueAt(j, i + 1);
+            }
+        }
+
+        // Parse day number from last column's name
+        String lastColumnName = model.getColumnName(columnCount - 1);
+        int lastDayNumber = Integer.parseInt(lastColumnName.split(" ")[1]);
+
+        // Add new column
+        newColumnNames[columnCount - 1] = "Day " + (lastDayNumber + 1) + " Orders";
+        for (int j = 0; j < rowCount; j++) {
+            newData[j][columnCount - 1] = null;
+        }
+
+        // Set new model
+        model.setDataVector(newData, newColumnNames);
+    }
+
+    public void updateTableDay(int day, int orderNumber) {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable5.getModel();
+        for(int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
+            String currentDay = model.getColumnName(columnIndex);
+            if(currentDay.equals("Day " + day + " Orders")) {
+                for(int i = 0; i < model.getRowCount(); i++) {
+                    if(model.getValueAt(i, columnIndex) == null){
+                        model.setValueAt(orderNumber, i, columnIndex);
+                        break;
+                    }
+                }
+                return;
+            }
+        }
+        System.out.println("Error: Day " + day + " is not currently shown in the table.");
+    }
+
+
+        /**
+         * @param args the command line arguments
+         */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

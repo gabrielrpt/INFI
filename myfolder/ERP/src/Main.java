@@ -1,10 +1,14 @@
 
 import GUI.MainMenu;
+import Logic.OrderManagement;
+import Logic.ServerERP_MES;
 
 import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
+
+        OrderManagement orderManagement = new OrderManagement();
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -31,11 +35,12 @@ public class Main {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainMenu().setVisible(true);
+                MainMenu Main = new MainMenu();
+                Main.setVisible(true);
+                orderManagement.mainMenu = Main;
             }
         });
         ServerERP_MES server = new ServerERP_MES();
-        OrderManagement orderManagement = new OrderManagement();
         orderManagement.server = server;
         // Start the server in a separate thread
         Thread serverThread = new Thread(server::connection);

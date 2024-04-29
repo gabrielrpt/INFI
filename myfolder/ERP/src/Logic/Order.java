@@ -1,3 +1,5 @@
+package Logic;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -14,6 +16,10 @@ public class Order {
     private final double earlyPenalty;
     private final Piece[] pieces;
     private double totalCost = 0;
+    private int purchasingDay = 0;
+    private int productionDay = 0;
+    private String[] supplier;
+
 
 
     // Constructor
@@ -31,7 +37,11 @@ public class Order {
     //Create a piece object for each piece in the order
     public void createPieces() throws SQLException {
         String rawPiece = Plans.getRawPiece(Plans.getFastestPathFromAll(Plans.getAllPaths(workPiece)));
-        double rawCost = Plans.getBestSupplier(rawPiece, quantity, dueDate, latePenalty, earlyPenalty);
+        String[] supplier = Plans.getBestSupplier(rawPiece, quantity, dueDate, latePenalty, earlyPenalty);
+        this.supplier = supplier;
+        double rawCost = Double.parseDouble(supplier[3]);
+        this.purchasingDay = Integer.parseInt(supplier[5]);
+        this.productionDay = Integer.parseInt(supplier[6]);
         for(int i = 0; i < quantity; i++){
             pieces[i] = new Piece(workPiece, rawPiece, Integer.parseInt(orderNumber), rawCost);
         }
@@ -86,5 +96,25 @@ public class Order {
 
     public double getTotalCost() {
         return totalCost;
+    }
+
+    public int getPurchasingDay() {
+        return purchasingDay;
+    }
+
+    public int getProductionDay() {
+        return productionDay;
+    }
+
+    public String[] getSupplier() {
+        return supplier;
+    }
+
+    public String getRawPiece(){
+        return pieces[0].getRawPiece();
+    }
+
+    public void setProductionDay(int productionDay) {
+        this.purchasingDay = productionDay;
     }
 }

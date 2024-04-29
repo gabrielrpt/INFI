@@ -1,3 +1,7 @@
+package Logic;
+
+import GUI.MainMenu;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,7 +20,7 @@ public class OrderManagement {
     private static final int PORT = 24680;
     private static final int BUFFER_SIZE = 1024;
     ArrayList<Order> orderList = new ArrayList<>();
-
+    public MainMenu mainMenu;
     public ServerERP_MES server;
 
     public void orderManagement() {
@@ -48,7 +52,7 @@ public class OrderManagement {
         //Currently, the method will only check once and then stop
         while (flag) {
             if (orderList.isEmpty()) {
-                System.out.println("No orders to check.");
+                //System.out.println("No orders to check.");
             } else {
                 Iterator<Order> iterator = orderList.iterator();
                 while (iterator.hasNext()) {
@@ -105,9 +109,11 @@ public class OrderManagement {
             // Create an Order object
             Order order = new Order(orderNumber, workPiece, quantity, dueDate, latePenalty, earlyPenalty);
             orderList.add(order);
-            int flag = insertOrder(order.getOrderNumber(), order.getWorkPiece(), order.getQuantity(), order.getDueDate(), order.getLatePenalty(), order.getEarlyPenalty());
-            System.out.println(flag);
+            insertOrder(order.getOrderNumber(), order.getWorkPiece(), order.getQuantity(), order.getDueDate(), order.getLatePenalty(), order.getEarlyPenalty());
             server.order = order;
+            mainMenu.productionPlan.updateTableDay(order.getProductionDay(), Integer.parseInt(orderNumber));
+            System.out.println("supplier: " + order.getSupplier()[0] + order.getSupplier()[1] + order.getSupplier()[2] + order.getSupplier()[3] + order.getSupplier()[4] + order.getSupplier()[5] + order.getSupplier()[6]);
+            mainMenu.purchasingPlan.updateTable(order);
 
             // Process the order
             System.out.println("Order Number: " + orderNumber);

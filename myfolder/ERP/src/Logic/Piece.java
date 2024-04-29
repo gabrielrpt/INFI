@@ -1,3 +1,5 @@
+package Logic;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

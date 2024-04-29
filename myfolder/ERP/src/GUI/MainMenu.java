@@ -13,6 +13,11 @@ import java.util.GregorianCalendar;
  */
 public class MainMenu extends javax.swing.JFrame {
 
+
+    MPS mps = new MPS();
+    public ProductionPlan productionPlan = new ProductionPlan();
+    public PurchasingPlan purchasingPlan = new PurchasingPlan();
+
     /**
      * Creates new form MainMenu
      */
@@ -133,19 +138,16 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        MPS mps= new MPS();
         mps.setVisible(true);
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        PurchasingPlan purchasingplan= new PurchasingPlan();
-        purchasingplan.setVisible(true);
+        purchasingPlan.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        ProductionPlan productionplan= new ProductionPlan();
-        productionplan.setVisible(true);
+        productionPlan.setVisible(true);
 
     }//GEN-LAST:event_jButton3ActionPerformed
                                          

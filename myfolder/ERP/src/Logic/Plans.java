@@ -1,4 +1,7 @@
+package Logic;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Plans {
@@ -24,35 +27,12 @@ public class Plans {
             {"P8", "P7", "T6", "15"},
             {"P8", "P9", "T5", "45"}
     };
-
-    // Function to determine the best supplier based on required quantity
-    public static int getBestSupplier(String pieceType, int requiredQuantity) {
-        String bestSupplier = null;
-        int minOrderQuantity = 0;
-
-        // Iterate through the supplier information
-        for (String[] supplier : supplierInfo) {
-            String supplierPiece = supplier[1];
-            if (supplierPiece.equals(pieceType)) {
-                int supplierMinOrder = Integer.parseInt(supplier[2]);
-                // Check if this supplier's minimum order is less than the current minimum order
-                if (supplierMinOrder <= requiredQuantity && supplierMinOrder > minOrderQuantity) {
-                    minOrderQuantity = supplierMinOrder;
-                    bestSupplier = supplier[3]; // Store the best supplier
-                }
-            }
-        }
-        if(bestSupplier==null){
-            if(pieceType.equals("P1")) return 55;
-            else return 18;
-        }
-        return Integer.parseInt(bestSupplier);
-    }
-
-    public static int getBestSupplier(String pieceType, int requiredQuantity, int dueDate, double latePenalty, double earlyPenalty) {
-        String bestSupplier = null;
+    public static String[] getBestSupplier(String pieceType, int requiredQuantity, int dueDate, double latePenalty, double earlyPenalty) {
+        String[] bestSupplier = null;
         double minCost = Double.MAX_VALUE;
         int transformationTime = 0;
+        int purchasingDay = 0;
+        int deliveryTime = 0;
 
         for (String[] supplier : supplierInfo) {
             if (supplier[1].equals(pieceType)) {
@@ -66,24 +46,31 @@ public class Plans {
                 double penalty = 0;
                 if (supplierDeliveryTime + transformationTime > dueDate) {
                     penalty = (supplierDeliveryTime + transformationTime - dueDate) * latePenalty;
+                    purchasingDay = 0; // Set production day to current day
                 } else if (supplierDeliveryTime + transformationTime < dueDate) {
                     penalty = (dueDate - supplierDeliveryTime - transformationTime) * earlyPenalty;
+                    purchasingDay = dueDate - supplierDeliveryTime - transformationTime; // Set production day x days after receiving the order
                 }
 
                 double totalCost = totalPieceCost + penalty;
 
                 if (totalCost < minCost) {
                     minCost = totalCost;
-                    bestSupplier = supplier[3];
+                    deliveryTime = supplierDeliveryTime;
+                    bestSupplier = supplier;
                 }
             }
         }
         if(bestSupplier==null){
             System.out.println("No supplier found for piece type: " + pieceType);
-            if(pieceType.equals("P1")) return 55;
-            else return 18;
+            if(pieceType.equals("P1")) bestSupplier = supplierInfo[4];
+            else bestSupplier = supplierInfo[5];
         }
-        return Integer.parseInt(bestSupplier);
+        // Add production day to the end of the bestSupplier array
+        String[] bestSupplierWithProductionDay = Arrays.copyOf(bestSupplier, bestSupplier.length + 2);
+        bestSupplierWithProductionDay[bestSupplierWithProductionDay.length - 2] = String.valueOf(purchasingDay);
+        bestSupplierWithProductionDay[bestSupplierWithProductionDay.length - 1] = String.valueOf(purchasingDay+deliveryTime);
+        return bestSupplierWithProductionDay;
     }
     public static List<String[]> getAllPaths(String finalPiece) {
         List<String[]> allPaths = new ArrayList<>();
