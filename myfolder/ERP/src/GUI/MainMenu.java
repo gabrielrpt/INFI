@@ -14,7 +14,7 @@ import java.util.GregorianCalendar;
 public class MainMenu extends javax.swing.JFrame {
 
 
-    MPS mps = new MPS();
+    public MPS mps = new MPS();
     public ProductionPlan productionPlan = new ProductionPlan();
     public PurchasingPlan purchasingPlan = new PurchasingPlan();
 

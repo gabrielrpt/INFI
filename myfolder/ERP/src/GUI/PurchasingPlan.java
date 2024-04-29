@@ -147,7 +147,7 @@ public class PurchasingPlan extends javax.swing.JFrame {
     }
 
     public void startTableShift() {
-        Timer timer = new Timer(10000, new ActionListener() {
+        Timer timer = new Timer(60000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 shiftDataAndIncreaseDay();
