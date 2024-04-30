@@ -1,22 +1,25 @@
 package Application;
-
-/*import service.OpcuaClient;
-import service.TcpClient;
-import service.jsonServices;*/
-
-import java.io.IOException;
-import Comms.*;
-import java.net.Socket;
-import java.util.ArrayList;
+import Comms.opcua;
+import GUI.MainMenu;
+import Service.TimerCount;
 
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public volatile static int day = 0;
 
-        /** Inicializa comunicação OPCUA */
-        opcUa initializeOPCUA = new opcUa();
-        Thread initializeOPCUAthread = new Thread(initializeOPCUA);
-        initializeOPCUAthread.start();
+    // static boolean newOrdersArrived = false;
+
+    public static void main(String[] args) throws Exception {
+
+        opcua opClient = new opcua();
+        opClient.connect("opc.tcp://DESKTOP-152F154:4840");
+
+        TimerCount timer = new TimerCount();
+        timer.NewTimer();
+
+
+        //Thread startOPCua = new Thread(new OPCUAReader());
+        //Thread dayCounter = new Thread(new DayCounter());
+
     }
-
 }
