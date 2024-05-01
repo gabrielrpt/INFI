@@ -1,4 +1,4 @@
-package org.OPC_UA;
+package src.main.java.org.OPC_UA;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.*;
