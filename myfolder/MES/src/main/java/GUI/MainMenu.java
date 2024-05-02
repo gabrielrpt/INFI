@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 /**
  *
  * @author gabri
@@ -109,7 +110,7 @@ public class MainMenu extends javax.swing.JFrame {
         getContentPane().add(jLabel3);
         jLabel3.setBounds(780, 6, 110, 20);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/Academic-and-Industry-Collaboration-1536x865.jpg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/Academic-and-Industry-Collaboration-1536x865.jpg"))); // NOI18N
         jLabel1.setText("jLabel1");
         getContentPane().add(jLabel1);
         jLabel1.setBounds(0, -10, 930, 580);

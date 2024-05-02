@@ -1,6 +1,6 @@
-package Logic;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Plans {
     // Define the supplier and product information
@@ -29,8 +29,7 @@ public class Plans {
         String[] bestSupplier = null;
         double minCost = Double.MAX_VALUE;
         int transformationTime = 0;
-        int purchasingDay = 0;
-        int deliveryTime = 0;
+        int productionDay = 0;
 
         for (String[] supplier : supplierInfo) {
             if (supplier[1].equals(pieceType)) {
@@ -44,17 +43,16 @@ public class Plans {
                 double penalty = 0;
                 if (supplierDeliveryTime + transformationTime > dueDate) {
                     penalty = (supplierDeliveryTime + transformationTime - dueDate) * latePenalty;
-                    purchasingDay = 0; // Set production day to current day
+                    productionDay = 0; // Set production day to current day
                 } else if (supplierDeliveryTime + transformationTime < dueDate) {
                     penalty = (dueDate - supplierDeliveryTime - transformationTime) * earlyPenalty;
-                    purchasingDay = dueDate - supplierDeliveryTime - transformationTime; // Set production day x days after receiving the order
+                    productionDay = dueDate - supplierDeliveryTime - transformationTime; // Set production day x days after receiving the order
                 }
 
                 double totalCost = totalPieceCost + penalty;
 
                 if (totalCost < minCost) {
                     minCost = totalCost;
-                    deliveryTime = supplierDeliveryTime;
                     bestSupplier = supplier;
                 }
             }
@@ -65,9 +63,8 @@ public class Plans {
             else bestSupplier = supplierInfo[5];
         }
         // Add production day to the end of the bestSupplier array
-        String[] bestSupplierWithProductionDay = Arrays.copyOf(bestSupplier, bestSupplier.length + 2);
-        bestSupplierWithProductionDay[bestSupplierWithProductionDay.length - 2] = String.valueOf(purchasingDay);
-        bestSupplierWithProductionDay[bestSupplierWithProductionDay.length - 1] = String.valueOf(purchasingDay+deliveryTime);
+        String[] bestSupplierWithProductionDay = Arrays.copyOf(bestSupplier, bestSupplier.length + 1);
+        bestSupplierWithProductionDay[bestSupplierWithProductionDay.length - 1] = String.valueOf(productionDay);
         return bestSupplierWithProductionDay;
     }
     public static List<String[]> getAllPaths(String finalPiece) {
@@ -107,40 +104,5 @@ public class Plans {
                 dfs(info[1], finalPiece, currentPath, currentTime + Integer.parseInt(info[3]), allPaths);
             }
         }
-    }
-
-    public static Map<Integer, String> calculateProductionTime(String path, int quantity, int startDay) {
-        final int conveyorTime = 5;
-        final int returnTime = 10;
-        String[] pieceTypes = path.split(" ");
-        int totalTime = 0;
-        Map<Integer, String> productionSchedule = new HashMap<>();
-
-        for (int i = 0; i < pieceTypes.length; i++) {
-            String pieceType = pieceTypes[i];
-            for (String[] info : productionInfo) {
-                if (info[0].equals(pieceType)) {
-                    // Check if the next piece in the path corresponds to info[1]
-                    if (i < pieceTypes.length - 1 && info[1].equals(pieceTypes[i + 1])) {
-                        int transformationTime = Integer.parseInt(info[3]);
-                        int productionTime = transformationTime + conveyorTime;
-                        if (i != pieceTypes.length - 2 && i!=0) {
-                            productionTime += returnTime;
-                        }
-                        totalTime += productionTime;
-                        System.out.println("Time:" + totalTime);
-                        int day = totalTime / 60 + startDay;
-                        String expectedPiece = pieceTypes[i+1] + " " + quantity;
-                        productionSchedule.put(day, expectedPiece);
-                        break;
-                    }
-                }
-            }
-            // If we're at the last piece in the path, we can end the loop
-            if (i == pieceTypes.length - 2) {
-                break;
-            }
-        }
-        return productionSchedule;
     }
 }

@@ -1,5 +1,3 @@
-package Logic;
-
 import GUI.MainMenu;
 
 import java.io.IOException;
@@ -12,7 +10,6 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static Logic.Plans.*;
 import static database.javaDatabase.insertOrder;
 import static database.javaDatabase.insertOrderCost;
 
@@ -21,7 +18,7 @@ public class OrderManagement {
     private static final int PORT = 24680;
     private static final int BUFFER_SIZE = 1024;
     ArrayList<Order> orderList = new ArrayList<>();
-    public MainMenu mainMenu;
+    MainMenu mainMenu;
     public ServerERP_MES server;
 
     public void orderManagement() {
@@ -113,9 +110,6 @@ public class OrderManagement {
             insertOrder(order.getOrderNumber(), order.getWorkPiece(), order.getQuantity(), order.getDueDate(), order.getLatePenalty(), order.getEarlyPenalty());
             server.order = order;
             mainMenu.productionPlan.updateTableDay(order.getProductionDay(), Integer.parseInt(orderNumber));
-            System.out.println("supplier: " + order.getSupplier()[0] + order.getSupplier()[1] + order.getSupplier()[2] + order.getSupplier()[3] + order.getSupplier()[4] + order.getSupplier()[5] + order.getSupplier()[6]);
-            mainMenu.purchasingPlan.updateTable(order);
-            mainMenu.mps.updateTable(calculateProductionTime(getFastestPathFromAll(getAllPaths(workPiece)), quantity, Integer.parseInt(order.getSupplier()[6])));
 
             // Process the order
             System.out.println("Order Number: " + orderNumber);

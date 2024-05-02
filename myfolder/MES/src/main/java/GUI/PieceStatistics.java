@@ -48,7 +48,7 @@ public class PieceStatistics extends javax.swing.JFrame {
         getContentPane().add(jButton1);
         jButton1.setBounds(332, 428, 229, 32);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/colorkit2.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/colorkit2.png"))); // NOI18N
         jLabel2.setText("jLabel2");
         getContentPane().add(jLabel2);
         jLabel2.setBounds(0, 0, 900, 500);

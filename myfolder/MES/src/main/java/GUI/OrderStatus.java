@@ -63,7 +63,7 @@ public class OrderStatus extends javax.swing.JFrame {
         jPanel1.add(jLabel1);
         jLabel1.setBounds(400, 20, 210, 29);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/25694.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/25694.png"))); // NOI18N
         jButton1.setText("Return to Main Menu");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -99,7 +99,7 @@ public class OrderStatus extends javax.swing.JFrame {
         jPanel1.add(jLabel2);
         jLabel2.setBounds(870, 10, 130, 16);
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/priority_2-512 (2).png"))); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/priority_2-512 (2).png"))); // NOI18N
         jPanel1.add(jLabel5);
         jLabel5.setBounds(820, 150, 100, 50);
 
@@ -108,7 +108,7 @@ public class OrderStatus extends javax.swing.JFrame {
         jPanel1.add(jLabel4);
         jLabel4.setBounds(890, 165, 70, 20);
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/colorkit2.png"))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/colorkit2.png"))); // NOI18N
         jLabel3.setText("jLabel3");
         jPanel1.add(jLabel3);
         jLabel3.setBounds(-70, 0, 1050, 330);

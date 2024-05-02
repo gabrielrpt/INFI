@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Map;
 
 /**
  *
@@ -118,27 +117,6 @@ public class MPS extends javax.swing.JFrame {
 
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    public void updateTable(Map<Integer, String> productionSchedule) {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable3.getModel();
-        for (Map.Entry<Integer, String> entry : productionSchedule.entrySet()) {
-            int day = entry.getKey();
-            String[] pieceInfo = entry.getValue().split(" ");
-            String pieceType = pieceInfo[0];
-            String quantity = pieceInfo[1];
-            System.out.println("Piece: " + pieceType + " Quantity: " + quantity + " Day: " + day);
-            for (int i = 0; i < model.getRowCount(); i++) {
-                if (model.getValueAt(i, 0).equals(pieceType)) {
-                    for (int j = 1; j < model.getColumnCount(); j++) {
-                        if (model.getColumnName(j).equals("Day " + day)) {
-                            model.setValueAt(quantity, i, j);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * @param args the command line arguments
