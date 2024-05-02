@@ -1,5 +1,6 @@
 package org.OPC_UA;
 
+import com.google.common.primitives.UnsignedInteger;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.*;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
@@ -65,6 +66,22 @@ public class OpcuaClient {
             return false;
         }
     }
+
+    public int[] readArray(String variable, int index){
+         int[] wareHouse = new int[10];
+        for (int i = 0; i <= 10; i++) {
+            DataValue arrayvalue = read(variable + "[" + i + "]", index);
+            if (arrayvalue != null && arrayvalue.getValue().getValue() != null) {
+                int quantity = ((UnsignedInteger) arrayvalue.getValue().getValue()).intValue();
+                    wareHouse[i] = quantity; // store the count of P(i) pieces
+                }
+            }
+        return wareHouse;
+        }
+
+
+
+
 
 
 
