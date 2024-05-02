@@ -71,7 +71,7 @@ public class javaDatabase {
         try {
             Connection connection = DriverManager.getConnection(databaseUrl, user, password);
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            String SQLQuery = "SELECT * FROM erpmes.pieces WHERE orderid = '" + orderNumber;
+            String SQLQuery = "SELECT * FROM erpmes.pieces WHERE orderid = '" + orderNumber + "'";
             resultSet = statement.executeQuery(SQLQuery);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,7 +79,7 @@ public class javaDatabase {
         return resultSet;
     }
 
-    public static ResultSet getOrderByProdDay(int productionDay) {
+    public static ResultSet getOrdersByProdDay(int productionDay) {
         ResultSet resultSet = null;
         try {
             Connection connection = DriverManager.getConnection(databaseUrl, user, password);
@@ -91,6 +91,8 @@ public class javaDatabase {
         }
         return resultSet;
     }
+
+
 
 
         public static int getResultSetSize(ResultSet resultSet) {
