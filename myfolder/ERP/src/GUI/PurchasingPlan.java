@@ -4,8 +4,13 @@
  */
 package GUI;
 
+import Logic.Order;
+
+import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -24,6 +29,8 @@ public class PurchasingPlan extends javax.swing.JFrame {
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
+        startTableShift();
+
     }
    public void currentDate(){
         Calendar cal= new GregorianCalendar();
@@ -114,14 +121,84 @@ public class PurchasingPlan extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void updateTable(Order order) {
+        String supplier = order.getSupplier()[0].substring(8); // Extract supplier's name from "Supplier X"
+        String pieceType = order.getRawPiece();
+        int purchasingDay = order.getPurchasingDay();
+        int quantity = order.getQuantity();
+
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        int columnCount = model.getColumnCount();
+
+        // Check if the purchasing day is present in the column labels
+        for (int j = 2; j < columnCount; j++) { // Start from 2 because day columns start from 2
+            if (Integer.parseInt(model.getColumnName(j).substring(4)) == purchasingDay) { // Extract day from column name "Day X"
+                // If the purchasing day is present, loop through the rows to find the matching supplier and piece type
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    if (model.getValueAt(i, 0).equals(supplier) && model.getValueAt(i, 1).equals(pieceType)) {
+                        model.setValueAt(quantity, i, j);
+                        System.out.println("Updated table with order: " + supplier + " " + pieceType + " " + quantity + " " + purchasingDay);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    public void startTableShift() {
+        Timer timer = new Timer(60000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                shiftDataAndIncreaseDay();
+            }
+        });
+        timer.start();
+    }
+
+    public void shiftDataAndIncreaseDay() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        int columnCount = model.getColumnCount();
+        int rowCount = model.getRowCount();
+
+        // Shift data to the left
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 2; j < columnCount - 1; j++) {
+                model.setValueAt(model.getValueAt(i, j + 1), i, j);
+            }
+            model.setValueAt(null, i, columnCount - 1);
+        }
+
+        // Get current column names
+        String[] columnNames = new String[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            columnNames[i] = model.getColumnName(i);
+        }
+
+        // Shift column names to the left
+        for (int i = 2; i < columnCount - 1; i++) {
+            columnNames[i] = columnNames[i + 1];
+        }
+
+        // Parse day number from last column's name
+        String lastColumnName = columnNames[columnCount - 2];
+        int lastDayNumber = Integer.parseInt(lastColumnName.split(" ")[1]);
+
+        // Update column name for the last column
+        columnNames[columnCount - 1] = "Day " + (lastDayNumber + 1);
+
+        // Set updated column names back to the model
+        model.setColumnIdentifiers(columnNames);
+    }
+
     /**
      * @param args the command line arguments
-     */
+        */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
