@@ -69,7 +69,7 @@ public void currentDate(){
         getContentPane().add(jLabel1);
         jLabel1.setBounds(290, 10, 323, 29);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/25694.png"))); // NOI18N
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/25694.png"))); // NOI18N
         jButton3.setText("Return to Main Menu");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,7 +103,7 @@ public void currentDate(){
         getContentPane().add(jLabel3);
         jLabel3.setBounds(730, 10, 130, 16);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/colorkit2.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/colorkit2.png"))); // NOI18N
         jLabel2.setText("jLabel2");
         getContentPane().add(jLabel2);
         jLabel2.setBounds(0, 0, 880, 270);

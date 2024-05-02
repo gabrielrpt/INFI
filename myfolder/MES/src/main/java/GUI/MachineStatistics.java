@@ -75,7 +75,7 @@ public void currentDate(){
         getContentPane().add(jLabel1);
         jLabel1.setBounds(440, 20, 400, 36);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/25694.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/25694.png"))); // NOI18N
         jButton1.setText("Return to Main Menu");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -218,7 +218,7 @@ public void currentDate(){
         getContentPane().add(jLabel8);
         jLabel8.setBounds(780, 160, 200, 21);
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/65000.png"))); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/65000.png"))); // NOI18N
         jButton2.setText("See Work Pieces Produced By Type");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -233,7 +233,7 @@ public void currentDate(){
         getContentPane().add(jLabel9);
         jLabel9.setBounds(1090, 20, 110, 17);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images2/colorkit2.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images2/colorkit2.png"))); // NOI18N
         jLabel2.setText("jLabel2");
         getContentPane().add(jLabel2);
         jLabel2.setBounds(0, 0, 1200, 520);
