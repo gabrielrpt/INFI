@@ -107,7 +107,11 @@ public class Order {
         return pieces[0].getRawPiece();
     }
 
+
     public void setProductionDay(int productionDay) {
         this.purchasingDay = productionDay;
     }
+
+
+
 }
