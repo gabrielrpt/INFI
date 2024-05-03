@@ -33,6 +33,14 @@ public class Orders {
         return workPiece;
     }
 
+    public int getWorkPieceNumber() {
+        if (workPiece != null && workPiece.length() > 1) {
+            return Integer.parseInt(workPiece.substring(1));
+        } else {
+            throw new IllegalArgumentException("Work piece is not in the expected format (Px)");
+        }
+    }
+
     public void setWorkPiece(String workPiece) {
         this.workPiece = workPiece;
     }

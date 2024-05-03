@@ -11,25 +11,27 @@ public class OpcuaClient {
     private OpcUaClient myclient;
     private double maxAge = 0;
 
-    public void connect(String endpointURL){
-        try{
+    private String Warehouse1node= ""; // por o node correspondente
+    private String Warehouse2node=""; // por o node correspondente
+
+    public void connect(String endpointURL) {
+        try {
             myclient = OpcUaClient.create(endpointURL);
             myclient.connect().get();
-            System.out.println("Connected to OPCUA server with endpoint:"+endpointURL);
-        }catch (Exception e){
+            System.out.println("Connected to OPCUA server with endpoint:" + endpointURL);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public DataValue read(String variable, int index){
+    public DataValue read(String variable, int index) {
         String ID = variable;
         NodeId nodeId = new NodeId(index, ID);
         DataValue value;
         try {
             value = myclient.readValue(maxAge, TimestampsToReturn.Both, nodeId).get();
             return value;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -37,15 +39,15 @@ public class OpcuaClient {
 
     public boolean writeWord(String variable, int index, String value) {
         UShort uShort = UShort.valueOf(value);
-        String ID =  variable;
+        String ID = variable;
         NodeId nodeId = new NodeId(index, ID);
         Variant variant = new Variant(uShort);
         DataValue dataValue = new DataValue(variant);
 
-        try{
-            myclient.writeValue(nodeId,dataValue).get();
+        try {
+            myclient.writeValue(nodeId, dataValue).get();
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -58,33 +60,36 @@ public class OpcuaClient {
         Variant variant = new Variant(shortValue);
         DataValue dataValue = new DataValue(variant);
 
-        try{
-            myclient.writeValue(nodeId,dataValue).get();
+        try {
+            myclient.writeValue(nodeId, dataValue).get();
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public int[] readArray(String variable, int index){
-         int[] wareHouse = new int[10];
-        for (int i = 0; i <= 10; i++) {
+    public int[] readWarehouseArray(String variable, int index) {
+        int[] wareHouse = new int[10];
+        for (int i = 0; i < 10; i++) {
             DataValue arrayvalue = read(variable + "[" + i + "]", index);
             if (arrayvalue != null && arrayvalue.getValue().getValue() != null) {
-                int quantity = ((UnsignedInteger) arrayvalue.getValue().getValue()).intValue();
-                    wareHouse[i] = quantity; // store the count of P(i) pieces
+                Object value = arrayvalue.getValue().getValue();
+                int quantity;
+                if (value instanceof UnsignedInteger) {
+                    quantity = ((UnsignedInteger) value).intValue();
+                } else if (value instanceof Short) {
+                    quantity = ((Short) value).intValue();
+                } else {
+                    throw new IllegalArgumentException("Unexpected type: " + value.getClass());
                 }
+                wareHouse[i] = quantity; // store the count of P(i) pieces
             }
-        return wareHouse;
         }
+        return wareHouse;
+    }
 
-
-
-
-
-
-
+// isto e para teste, depois apagar main
     public static void main(String[] args) {
         OpcuaClient client = new OpcuaClient();
         client.connect("opc.tcp://localhost:4840");  // replace with your OPC UA server's endpoint URL
@@ -98,13 +103,18 @@ public class OpcuaClient {
         boolean resultInt = client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.raulnengue", 4, "8");
 
 
-
         if (resultInt) {
             System.out.println("Integer value written successfully.");
         } else {
             System.out.println("Failed to write integer value.");
         }
+        int[] arrayValues = client.readWarehouseArray("|var|CODESYS Control Win V3 x64.Application.GVL.test", 4); // por o array certo depois!!!
 
+        // Print the values of the array
+        System.out.println("Array values:");
+        for (int value2 : arrayValues) {
+            System.out.println(value2);
 
+        }
     }
-    }
+}
