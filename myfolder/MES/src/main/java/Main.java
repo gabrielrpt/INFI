@@ -11,7 +11,7 @@ public class Main {
         // It creates the orderHandling object and every 60 seconds calls the getOrdersByProdDay method
         // to get the orders for the current production day
         OpcuaClient opcuaClient = new OpcuaClient();
-        opcuaClient.connect("opc.tcp://localhost:4840");
+        //opcuaClient.connect("opc.tcp://localhost:4840");
         OrderHandling orderHandling = new OrderHandling(opcuaClient);
 
         //Create a list to store the orders

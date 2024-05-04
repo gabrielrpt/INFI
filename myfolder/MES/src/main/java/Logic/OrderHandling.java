@@ -9,7 +9,7 @@ import java.util.List;
 
 public class OrderHandling {
 
-    private OpcuaClient client;
+    private final OpcuaClient client;
 
     public OrderHandling(OpcuaClient client) {
         this.client= client;
