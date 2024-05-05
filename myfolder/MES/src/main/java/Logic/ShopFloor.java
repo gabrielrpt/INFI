@@ -1,7 +1,5 @@
 package Logic;
 
-import org.OPC_UA.OpcuaClient;
-
 import java.util.*;
 
 public class ShopFloor {
@@ -9,10 +7,7 @@ public class ShopFloor {
     private final Map<String, List<String>> machineToolMap;
     private final Map<String, List<String>> toolTransformationMap;
 
-    private final OpcuaClient client;
-
-    public ShopFloor(OpcuaClient client) {
-        this.client = client;
+    public ShopFloor() {
         cellMachineMap = new HashMap<>();
         machineToolMap = new HashMap<>();
         toolTransformationMap = new HashMap<>();
@@ -70,41 +65,6 @@ public class ShopFloor {
         }
         return null;
     }
-
-    public void processOrder(Orders order) {
-        String rawPiece = order.getWorkPiece();
-        String workPiece = order.getWorkPiece();
-        List<String> cells;
-        int inPiece1 = 0, outPiece1 = 0, inPiece2 = 0, outPiece2 = 0;
-
-        if (rawPiece.equals("P1")) {
-            cells = Arrays.asList("C1", "C2", "C3");
-            inPiece1 = 1;
-            outPiece1 = 3;
-            inPiece2 = 3;
-            outPiece2 = 4;
-        } else if (rawPiece.equals("P2")) {
-            cells = Arrays.asList("C4", "C5", "C6");
-            inPiece1 = 2;
-            outPiece1 = 8;
-            inPiece2 = 8;
-            outPiece2 = workPiece.equals("P7") ? 7 : 9;
-        } else {
-            // Handle other raw piece types if necessary
-            return;
-        }
-
-        for (String cell : cells) {
-            if (!isCellFull(cell)) {
-                client.writeMInPiece(inPiece1, 1);
-                client.writeMOutPiece(outPiece1, 1);
-                //do this for all the machines
-            }
-        }
-    }
-
-    private boolean isCellFull(String cell) {
-        // Implement this method to check if a cell is full
-        return false;
-    }
 }
+
+

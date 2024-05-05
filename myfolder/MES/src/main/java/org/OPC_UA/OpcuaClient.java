@@ -6,13 +6,20 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.*;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
+import java.util.*;
+
 public class OpcuaClient {
 
     private OpcUaClient myclient;
     private double maxAge = 0;
 
-    private String Warehouse1node= ""; // por o node correspondente
-    private String Warehouse2node=""; // por o node correspondente
+    private String Warehouse1node= "|var|CODESYS Control Win V3 x64.Application.GVL.W1";
+    private String Warehouse2node="|var|CODESYS Control Win V3 x64.Application.GVL.W2";
+
+    private Map<String,String> MachineSensorNodeIds;
+
+
+
 
     public void connect(String endpointURL) {
         try {
