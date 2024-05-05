@@ -8,10 +8,12 @@ public class Orders {
     private double latePenalty;
     private double earlyPenalty;
     private int productionDay;
+    private String rawPiece;
 
-    public Orders(String orderNumber, String workPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty, int productionDay) {
+    public Orders(String orderNumber, String workPiece, String rawPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty, int productionDay) {
         this.orderNumber = orderNumber;
         this.workPiece = workPiece;
+        this.rawPiece = rawPiece;
         this.quantity = quantity;
         this.dueDate = dueDate;
         this.latePenalty = latePenalty;
@@ -83,5 +85,13 @@ public class Orders {
 
     public void setProductionDay(int productionDay) {
         this.productionDay = productionDay;
+    }
+
+    public String getRawPiece() {
+        return rawPiece;
+    }
+
+    public void setRawPiece(String rawPiece) {
+        this.rawPiece = rawPiece;
     }
 }

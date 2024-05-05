@@ -61,18 +61,18 @@ public class OpcuaClient {
     }
 
 
-    //TODO IN CODESYS:
-    //TODO create a MInPiece array of 6  elements that represent each machine - this array will be used to store the inPiece of each machine
-    //TODO create a MOutPiece array of 6  elements that represent each machine - this array will be used to store the outPiece of each machine
 
-    //TODO IN MES:
-    //TODO create a method that writes the inPiece of a machine in the MInPiece array
+
+
+    //method that writes the inPiece of a machine in the MInPiece array
     public void writeMInPiece(int inPiece, int machineNumber) {
-
+        String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.MInPiece[" + machineNumber + "]";
+        writeInt16(variable, 4, String.valueOf(inPiece));
     }
-    //TODO create a method that writes the outPiece of a machine in the MOutPiece array
+    //method that writes the outPiece of a machine in the MOutPiece array
     public void writeMOutPiece(int outPiece, int machineNumber) {
-
+        String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.MOutPiece[" + machineNumber + "]";
+        writeInt16(variable, 4, String.valueOf(outPiece));
     }
 
     public boolean writeInt16(String variable, int index, String value) {

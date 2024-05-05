@@ -1,5 +1,7 @@
 package Logic;
 import org.OPC_UA.OpcuaClient;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+
 import java.util.*;
 
 public class ShopFloor {
@@ -70,7 +72,7 @@ public class ShopFloor {
     }
 
     public void processOrder(Orders order) {
-        String rawPiece = order.getWorkPiece();
+        String rawPiece = order.getRawPiece();
         String workPiece = order.getWorkPiece();
         List<String> cells;
         int inPiece1 = 0, outPiece1 = 0, inPiece2 = 0, outPiece2 = 0;
@@ -87,22 +89,37 @@ public class ShopFloor {
             outPiece1 = 8;
             inPiece2 = 8;
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
-        } else {
-            // Handle other raw piece types if necessary
-            return;
+
+            client.writeMInPiece(inPiece1, 6);
+            client.writeMOutPiece(outPiece1, 6);
+
+            client.writeMInPiece(inPiece2, 7);
+            client.writeMOutPiece(outPiece2, 7);
+
+            client.writeMInPiece(inPiece1, 8);
+            client.writeMOutPiece(outPiece1, 8);
+
+            client.writeMInPiece(inPiece2, 9);
+            client.writeMOutPiece(outPiece2, 9);
+
+            client.writeMInPiece(inPiece1, 10);
+            client.writeMOutPiece(outPiece1, 10);
+
+            client.writeMInPiece(inPiece2, 11);
+            client.writeMOutPiece(outPiece2, 11);
+
+            
         }
 
-        for (String cell : cells) {
-            if (!isCellFull(cell)) {
-                client.writeMInPiece(inPiece1, 1);
-                client.writeMOutPiece(outPiece1, 1);
-                //do this for all the machines
-            }
-        }
     }
 
-    private boolean isCellFull(String cell) {
-        // Implement this method to check if a cell is full
+
+    public boolean isEntryConveyorFree(int conveyorNumber) {
+        String variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C" + conveyorNumber + ".recv_I";
+        DataValue value = client.read(variable, 4);
+        if (value != null && value.getValue().getValue() != null) {
+            return value.getValue().getValue().equals("0");
+        }
         return false;
     }
 }

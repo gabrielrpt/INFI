@@ -28,11 +28,12 @@ public class OrderHandling {
                 double latePenalty = rs.getDouble("latepen");
                 double earlyPenalty = rs.getDouble("earlypen");
                 int productionDay = rs.getInt("productionday");
+                String rawPiece = rs.getString("rawpiece");
 
                 //print the orders
                 System.out.println("Order Number: " + orderNumber + " Work Piece: " + workPiece + " Quantity: " + quantity + " Due Date: " + dueDate + " Late Penalty: " + latePenalty + " Early Penalty: " + earlyPenalty + " Production Day: " + productionDay);
 
-                Orders order = new Orders(orderNumber, workPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
+                Orders order = new Orders(orderNumber, workPiece, rawPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
                 orderList.add(order);
 
 
@@ -59,6 +60,17 @@ public class OrderHandling {
 
         return piecesNeeded;
     }
+    // this method will check if all pieces from an order are available in the warehouse pode ser redundante?
+    public boolean areAllPiecesAvailable(Orders order) {
+        // Calculate the number of pieces needed for the order
+        int piecesNeeded = calculatePiecesNeeded(order);
 
+        // If no pieces are needed, then all pieces are available
+        if (piecesNeeded == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
