@@ -28,7 +28,10 @@ public class OrderHandling {
                 double latePenalty = rs.getDouble("latepen");
                 double earlyPenalty = rs.getDouble("earlypen");
                 int productionDay = rs.getInt("productionday");
-                String rawPiece = rs.getString("rawpiece");
+
+                ResultSet prs = javaDatabase.getPieceByOrderNumber(orderNumber);
+                prs.next();
+                String rawPiece = prs.getString("rawpiece");
 
                 //print the orders
                 System.out.println("Order Number: " + orderNumber + " Work Piece: " + workPiece + " Quantity: " + quantity + " Due Date: " + dueDate + " Late Penalty: " + latePenalty + " Early Penalty: " + earlyPenalty + " Production Day: " + productionDay);

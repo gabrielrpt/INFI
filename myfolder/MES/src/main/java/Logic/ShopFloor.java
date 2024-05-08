@@ -108,6 +108,10 @@ public class ShopFloor {
             client.writeMInPiece(inPiece2, 11);
             client.writeMOutPiece(outPiece2, 11);
 
+            client.writeWOutPiece(inPiece1, 3);
+            client.writeWOutPiece(inPiece1, 4);
+            client.writeWOutPiece(inPiece1, 5);
+
             
         }
 

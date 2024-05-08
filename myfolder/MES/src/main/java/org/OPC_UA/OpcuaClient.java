@@ -75,6 +75,11 @@ public class OpcuaClient {
         writeInt16(variable, 4, String.valueOf(outPiece));
     }
 
+    public void writeWOutPiece(int outPiece, int conveyorNumber) {
+        String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.registers[" + conveyorNumber + "]";
+        writeWord(variable, 4, String.valueOf(outPiece));
+    }
+
     public boolean writeInt16(String variable, int index, String value) {
         Short shortValue = Short.valueOf(value);
         String ID = variable;
@@ -123,7 +128,7 @@ public class OpcuaClient {
 
         //boolean resultWord = client.writeWord("|var|CODESYS Control Win V3 x64.Application.GVL.raulnengue", 4, "10");
         boolean resultInt = client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.raulnengue", 4, "8");
-
+        //client.writeWOutPiece(1, 3);
 
         if (resultInt) {
             System.out.println("Integer value written successfully.");
