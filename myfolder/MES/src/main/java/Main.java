@@ -12,6 +12,23 @@ public class Main {
         // It creates the orderHandling object and every 60 seconds calls the getOrdersByProdDay method
         // to get the orders for the current production day
         OpcuaClient opcuaClient = new OpcuaClient();
+        boolean isConnected = false;
+
+        // Keep trying to connect until successful
+        while (!isConnected) {
+            try {
+                opcuaClient.connect("opc.tcp://localhost:4840");
+                isConnected = true;
+            } catch (Exception e) {
+                System.out.println("Failed to connect. Retrying...");
+                try {
+                    Thread.sleep(5000); // wait for 5 seconds before retrying
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                }
+            }
+        }
+
         opcuaClient.connect("opc.tcp://localhost:4840");
         OrderHandling orderHandling = new OrderHandling(opcuaClient);
 
