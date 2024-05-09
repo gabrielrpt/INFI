@@ -1,5 +1,5 @@
 package Logic;
-import org.OPC_UA.OpcuaClient;
+import org.OPC_UA.OPCUAClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 import java.util.*;
@@ -8,10 +8,10 @@ public class ShopFloor {
     private final Map<String, List<String>> cellMachineMap;
     private final Map<String, List<String>> machineToolMap;
     private final Map<String, List<String>> toolTransformationMap;
-    private final OpcuaClient client;
+    private final OPCUAClient client;
 
 
-    public ShopFloor(OpcuaClient client) {
+    public ShopFloor(OPCUAClient client) {
         this.client = client;
         cellMachineMap = new HashMap<>();
         machineToolMap = new HashMap<>();
@@ -74,49 +74,119 @@ public class ShopFloor {
     public void processOrder(Orders order) {
         String rawPiece = order.getRawPiece();
         String workPiece = order.getWorkPiece();
-        List<String> cells;
-        int inPiece1 = 0, outPiece1 = 0, inPiece2 = 0, outPiece2 = 0;
+        int quantity = order.getQuantity();
+        int current = 0;
+        int  outPiece2 = 0;
 
         if (rawPiece.equals("P1")) {
-            cells = Arrays.asList("C1", "C2", "C3");
-            inPiece1 = 1;
-            outPiece1 = 3;
-            inPiece2 = 3;
-            outPiece2 = 4;
-        } else if (rawPiece.equals("P2")) {
-            cells = Arrays.asList("C4", "C5", "C6");
-            inPiece1 = 2;
-            outPiece1 = 8;
-            inPiece2 = 8;
+            // Start a new thread for transformP1toP4
+            new Thread(() -> transformP1toP4(quantity, current, 1, 3, 3, 4)).start();
+            // Start a new thread for checkAndExtractP4
+            new Thread(() -> checkAndExtractP4(quantity)).start();
+            while (current<quantity){
+                //DO NOTHING
+            }
+            // Call transformP4toFinal
+            //transformP4toFinal(quantity, workPiece);
+        } else {
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
+            transformP2toFinal(quantity, 2, 8, 8, outPiece2);
+        }
+    }
 
-            client.writeMInPiece(inPiece1, 6);
-            client.writeMOutPiece(outPiece1, 6);
+    private void checkAndExtractP4(int quantity) {
+        // Implement this method to check the warehouse for P4 pieces and extract them
+        int remainingQuantity = quantity;
+        while (remainingQuantity > 0) {
+            int P4Quantity = client.getPieceQuantity(4, 2);
+            if (P4Quantity > 0) {
+                while(P4Quantity > 0) {
+                    client.writeWarehouseArray(2, 4, P4Quantity - 1);
+                    client.writeWOutPiece(4, 6);
+                    P4Quantity--;
+                    remainingQuantity--;
+                }
+            }
+        }
+    }
+
+    public void transformP2toFinal(int quantity, int inPiece1, int outPiece1, int inPiece2, int outPiece2){
+        int unfinishedPieces = quantity;
+        while(unfinishedPieces > 0) {
+
+            //NOTE: conveyorNumber offsets go from 5 to 10
+            if(isEntryConveyorFree(8)){
+                client.writeMInPiece(inPiece1, 6);
+                client.writeMOutPiece(outPiece1, 6);
+                client.writeWOutPiece(inPiece1, 3);
+                unfinishedPieces--;
+            }
 
             client.writeMInPiece(inPiece2, 7);
             client.writeMOutPiece(outPiece2, 7);
 
-            client.writeMInPiece(inPiece1, 8);
-            client.writeMOutPiece(outPiece1, 8);
+            if(isEntryConveyorFree(9) && quantity > 0){
+                client.writeMInPiece(inPiece1, 8);
+                client.writeMOutPiece(outPiece1, 8);
+                client.writeWOutPiece(inPiece1, 4);
+                unfinishedPieces--;
+            }
 
             client.writeMInPiece(inPiece2, 9);
             client.writeMOutPiece(outPiece2, 9);
 
-            client.writeMInPiece(inPiece1, 10);
-            client.writeMOutPiece(outPiece1, 10);
+            if(isEntryConveyorFree(10) && quantity > 0){
+                client.writeMInPiece(inPiece1, 10);
+                client.writeMOutPiece(outPiece1, 10);
+                client.writeWOutPiece(inPiece1, 5);
+                unfinishedPieces--;
+            }
 
             client.writeMInPiece(inPiece2, 11);
             client.writeMOutPiece(outPiece2, 11);
 
-            client.writeWOutPiece(inPiece1, 3);
-            client.writeWOutPiece(inPiece1, 4);
-            client.writeWOutPiece(inPiece1, 5);
-
-            
         }
-
     }
 
+    public void transformP4toFinal(){
+        // Implement this method to transform P4 pieces to the final piece
+    }
+
+    public void transformP1toP4(int quantity, int current, int inPiece1, int outPiece1, int inPiece2, int outPiece2){
+        while(quantity > 0) {
+
+            //NOTE: conveyorNumber offsets go from 5 to 10
+            if(isEntryConveyorFree(5)){
+                client.writeMInPiece(inPiece1, 0);
+                client.writeMOutPiece(outPiece1, 0);
+                client.writeWOutPiece(inPiece1, 0);
+                quantity--;
+            }
+
+            client.writeMInPiece(inPiece2, 1);
+            client.writeMOutPiece(outPiece2, 1);
+
+            if(isEntryConveyorFree(6) && quantity > 0){
+                client.writeMInPiece(inPiece1, 2);
+                client.writeMOutPiece(outPiece1, 2);
+                client.writeWOutPiece(inPiece1, 1);
+                quantity--;
+            }
+
+            client.writeMInPiece(inPiece2, 3);
+            client.writeMOutPiece(outPiece2, 3);
+
+            if(isEntryConveyorFree(7) && quantity > 0){
+                client.writeMInPiece(inPiece1, 4);
+                client.writeMOutPiece(outPiece1, 4);
+                client.writeWOutPiece(inPiece1, 2);
+                quantity--;
+            }
+
+            client.writeMInPiece(inPiece2, 5);
+            client.writeMOutPiece(outPiece2, 5);
+        }
+    }
 
     public boolean isEntryConveyorFree(int conveyorNumber) {
         String variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C" + conveyorNumber + ".recv_I";

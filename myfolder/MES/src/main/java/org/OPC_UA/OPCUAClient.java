@@ -8,13 +8,9 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
 import java.util.*;
 
-public class OpcuaClient {
+public class OPCUAClient {
 
     private OpcUaClient myclient;
-    private double maxAge = 0;
-
-    private String Warehouse1node= "|var|CODESYS Control Win V3 x64.Application.GVL.W1";
-    private String Warehouse2node="|var|CODESYS Control Win V3 x64.Application.GVL.W2";
 
     private Map<String,String> MachineSensorNodeIds;
 
@@ -36,6 +32,7 @@ public class OpcuaClient {
         NodeId nodeId = new NodeId(index, ID);
         DataValue value;
         try {
+            double maxAge = 0;
             value = myclient.readValue(maxAge, TimestampsToReturn.Both, nodeId).get();
             return value;
         } catch (Exception e) {
@@ -116,9 +113,40 @@ public class OpcuaClient {
         return wareHouse;
     }
 
+    public int getPieceQuantity(int pieceType, int warehouseNumber) {
+        // Construct the warehouse node string based on the provided warehouse number
+        String warehouseNode = "|var|CODESYS Control Win V3 x64.Application.GVL.W" + warehouseNumber;
+
+        // Read the warehouse array
+        int[] warehouseArray = readWarehouseArray(warehouseNode, 4);
+
+        // Return the quantity of the specified piece type
+        return warehouseArray[pieceType];
+    }
+
+    public boolean writeWarehouseArray(int warehouseNumber, int position, int value) {
+        // Construct the warehouse node string based on the provided warehouse number
+        String warehouseNode;
+        if (warehouseNumber == 1) {
+            String warehouse1node = "|var|CODESYS Control Win V3 x64.Application.GVL.W1";
+            warehouseNode = warehouse1node;
+        } else if (warehouseNumber == 2) {
+            String warehouse2node = "|var|CODESYS Control Win V3 x64.Application.GVL.W2";
+            warehouseNode = warehouse2node;
+        } else {
+            throw new IllegalArgumentException("Invalid warehouse number: " + warehouseNumber);
+        }
+
+        // Construct the node string for the specific position in the array
+        String node = warehouseNode + "[" + position + "]";
+
+        // Use the writeInt16 method to write the value to the specific position in the array
+        return writeInt16(node, 4, String.valueOf(value));
+    }
+
 // isto e para teste, depois apagar main
     public static void main(String[] args) {
-        OpcuaClient client = new OpcuaClient();
+        OPCUAClient client = new OPCUAClient();
         client.connect("opc.tcp://localhost:4840");  // replace with your OPC UA server's endpoint URL
         DataValue value = client.read("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C1.offset_I", 4);
 

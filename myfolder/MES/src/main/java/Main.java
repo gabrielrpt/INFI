@@ -1,7 +1,7 @@
 import Logic.OrderHandling;
 import Logic.Orders;
 import Logic.ShopFloor;
-import org.OPC_UA.OpcuaClient;
+import org.OPC_UA.OPCUAClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,7 +11,7 @@ public class Main {
         // This is the main class for the MES
         // It creates the orderHandling object and every 60 seconds calls the getOrdersByProdDay method
         // to get the orders for the current production day
-        OpcuaClient opcuaClient = new OpcuaClient();
+        OPCUAClient opcuaClient = new OPCUAClient();
         boolean isConnected = false;
 
         // Keep trying to connect until successful
@@ -28,8 +28,6 @@ public class Main {
                 }
             }
         }
-
-        opcuaClient.connect("opc.tcp://localhost:4840");
         OrderHandling orderHandling = new OrderHandling(opcuaClient);
 
         //Create a new shop floor object

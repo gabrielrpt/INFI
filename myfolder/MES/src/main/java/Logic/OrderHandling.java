@@ -1,7 +1,7 @@
 package Logic;
 
 import database.javaDatabase;
-import org.OPC_UA.OpcuaClient;
+import org.OPC_UA.OPCUAClient;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,9 +9,9 @@ import java.util.List;
 
 public class OrderHandling {
 
-    private final OpcuaClient client;
+    private final OPCUAClient client;
 
-    public OrderHandling(OpcuaClient client) {
+    public OrderHandling(OPCUAClient client) {
         this.client= client;
 
     }
