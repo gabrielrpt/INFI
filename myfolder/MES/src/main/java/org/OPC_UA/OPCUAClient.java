@@ -3,9 +3,11 @@ package org.OPC_UA;
 import com.google.common.primitives.UnsignedInteger;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.*;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.ULong;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
+import java.time.Duration;
 import java.util.*;
 
 public class OPCUAClient {
@@ -143,6 +145,36 @@ public class OPCUAClient {
         // Use the writeInt16 method to write the value to the specific position in the array
         return writeInt16(node, 4, String.valueOf(value));
     }
+    public Duration readTime(String variable, int index) {
+        String ID = variable;
+        NodeId nodeId = new NodeId(index, ID);
+        DataValue value;
+        try {
+            double maxAge = 0;
+            value = myclient.readValue(maxAge, TimestampsToReturn.Both, nodeId).get();
+            if (value != null) {
+                Object timeValue = value.getValue().getValue();
+                if (timeValue instanceof ULong) {
+                    return Duration.ofMillis(((ULong) timeValue).longValue());
+                } else if (timeValue instanceof Long) {
+                    return Duration.ofMillis((Long) timeValue);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type: " + timeValue.getClass());
+                }
+            } else {
+                throw new IllegalArgumentException("Value is null");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
+
+
 
 // isto e para teste, depois apagar main
     public static void main(String[] args) {

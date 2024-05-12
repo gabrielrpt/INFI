@@ -4,27 +4,197 @@
  */
 package GUI;
 
+import org.OPC_UA.OPCUAClient;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author gabri
  */
 public class MachineStatistics extends javax.swing.JFrame {
+     OPCUAClient client;
+    String machine1Time;
+    String machine2Time;
+    String machine3Time;
+    String machine4Time;
+    String machine5Time;
+    String machine6Time;
+    String machine7Time;
+    String machine8Time;
+    String machine9Time;
+    String machine10Time;
+    String machine11Time;
+    String machine12Time;
 
-    /**
-     * Creates new form MachineStatistics
-     */
+    ScheduledExecutorService executorService;
+
+
     public MachineStatistics() {
-       initComponents();
+        // Create an instance of OPCUAClient
+        client = new OPCUAClient();
+
+        try {
+            client.connect("opc.tcp://localhost:4840");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // handle the exception
+        }
+
+        initComponents();
         Toolkit toolkit = getToolkit();
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
+
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::updateMachineTimes, 0, 1, TimeUnit.SECONDS);
     }
+
+    private void updateMachineTimes() {
+        Duration machine1Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.timer", 4);
+        Duration machine2Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.timer", 4);
+        Duration machine3Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.timer", 4);
+        Duration machine4Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.timer", 4);
+        Duration machine5Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.timer", 4);
+        Duration machine6Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.timer", 4);
+        Duration machine7Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.timer", 4);
+        Duration machine8Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.timer", 4);
+        Duration machine9Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.timer", 4);
+        Duration machine10Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.timer", 4);
+        Duration machine11Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.timer", 4);
+        Duration machine12Timer = client.readTime("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.timer", 4);
+
+         machine1Time = formatDuration(machine1Timer);
+         machine2Time = formatDuration(machine2Timer);
+         machine3Time = formatDuration(machine3Timer);
+         machine4Time = formatDuration(machine4Timer);
+         machine5Time = formatDuration(machine5Timer);
+         machine6Time = formatDuration(machine6Timer);
+         machine7Time = formatDuration(machine7Timer);
+         machine8Time = formatDuration(machine8Timer);
+         machine9Time = formatDuration(machine9Timer);
+         machine10Time = formatDuration(machine10Timer);
+         machine11Time = formatDuration(machine11Timer);
+         machine12Time = formatDuration(machine12Timer);
+         updateTable1();
+         updateTable2();
+         updateTable3();
+         updateTable4();
+         updateTable5();
+         updateTable7();
+    }
+
+
+    public void updateTable1() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine11Time, i, 1);
+                    break;
+                case "4":
+                    model.setValueAt(machine12Time, i, 1);
+                    break;
+
+            }
+        }
+    }
+    public void updateTable2() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable2.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "1":
+                    model.setValueAt(machine1Time, i, 1);
+                    break;
+                case "2":
+                    model.setValueAt(machine2Time, i, 1);
+                    break;
+
+            }
+        }
+    }
+
+    public void updateTable3() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable3.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "1":
+                    model.setValueAt(machine5Time, i, 1);
+                    break;
+                case "2":
+                    model.setValueAt(machine6Time, i, 1);
+                    break;
+            }
+        }
+    }
+
+    public void updateTable4() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable4.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "1":
+                    model.setValueAt(machine3Time, i, 1);
+                    break;
+                case "2":
+                    model.setValueAt(machine4Time, i, 1);
+                    break;
+            }
+        }
+    }
+
+    public void updateTable5() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable5.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine7Time, i, 1);
+                    break;
+                case "4":
+                    model.setValueAt(machine8Time, i, 1);
+                    break;
+            }
+        }
+    }
+
+    public void updateTable7() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable7.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine9Time, i, 1);
+                    break;
+                case "4":
+                    model.setValueAt(machine10Time, i, 1);
+                    break;
+            }
+        }
+    }
+
+
+
+
+    public String formatDuration(Duration duration) {
+        long hours = duration.toHours();
+        int minutes = duration.toMinutesPart();
+        int seconds = duration.toSecondsPart();
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+
 public void currentDate(){
         Calendar cal= new GregorianCalendar();
         int month = cal.get(Calendar.MONTH);
@@ -33,13 +203,7 @@ public void currentDate(){
        
         jLabel9.setText(day+"/"+(month+1)+"/" + year);
     }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
@@ -88,8 +252,8 @@ public void currentDate(){
         jTable1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
-                {"4", null, null}
+                {"3", machine10Time, null},
+                {"4", machine11Time, null}
             },
             new String [] {
                 "Machine Type ", "Total Operating Time", "Number of WP Produced (Total)"
@@ -105,8 +269,8 @@ public void currentDate(){
         jTable2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", null, null},
-                {"2", null, null}
+                {"1", machine3Time, null},
+                {"2", machine4Time, null}
             },
             new String [] {
                 "Machine Type ", "Total Operating Time", "Number of WP Produced (Total)"
@@ -122,8 +286,8 @@ public void currentDate(){
         jTable3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", null, null},
-                {"2", null, null}
+                {"1", machine5Time, null},
+                {"2", machine6Time, null}
             },
             new String [] {
                 "Machine Type ", "Total Operating Time", "Number of WP Produced (Total)"
@@ -139,8 +303,8 @@ public void currentDate(){
         jTable4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", null, null},
-                {"2", null, null}
+                {"1", machine3Time, null},
+                {"2", machine4Time, null}
             },
             new String [] {
                 "Machine Type ", "Total Operating Time", "Number of WP Produced (Total)"
@@ -156,8 +320,8 @@ public void currentDate(){
         jTable5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable5.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
-                {"4", null, null}
+                {"3", machine7Time, null},
+                {"4", machine8Time, null}
             },
             new String [] {
                 "Machine Type ", "Total Operating Time", "Number of WP Produced (Total)"
@@ -199,8 +363,8 @@ public void currentDate(){
         jTable7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable7.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
-                {"4", null, null}
+                {"3", machine9Time, null},
+                {"4", machine10Time, null}
             },
             new String [] {
                 "Machine Type ", "Total Operating Time", "Number of WP Produced (Total)"
