@@ -33,6 +33,9 @@ public class MachineStatistics extends javax.swing.JFrame {
     String machine10Time;
     String machine11Time;
     String machine12Time;
+    int machine1Total, machine2Total, machine3Total, machine4Total, machine5Total, machine6Total,
+            machine7Total, machine8Total, machine9Total, machine10Total, machine11Total, machine12Total;
+
 
     ScheduledExecutorService executorService;
 
@@ -56,6 +59,7 @@ public class MachineStatistics extends javax.swing.JFrame {
 
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(this::updateMachineTimes, 0, 1, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(this::updateMachineTotals, 0, 1, TimeUnit.SECONDS);
     }
 
     private void updateMachineTimes() {
@@ -92,6 +96,21 @@ public class MachineStatistics extends javax.swing.JFrame {
          updateTable7();
     }
 
+    private void updateMachineTotals(){
+        machine1Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.n_pecaTotal", 4);
+        machine2Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.n_pecaTotal", 4);
+        machine3Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.n_pecaTotal", 4);
+        machine4Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.n_pecaTotal", 4);
+        machine5Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.n_pecaTotal", 4);
+        machine6Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_pecaTotal", 4);
+        machine7Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_pecaTotal", 4);
+        machine8Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_pecaTotal", 4);
+        machine9Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_pecaTotal", 4);
+        machine10Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_pecaTotal", 4);
+        machine11Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_pecaTotal", 4);
+        machine12Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_pecaTotal", 4);
+    }
+
 
     public void updateTable1() {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
@@ -100,9 +119,11 @@ public class MachineStatistics extends javax.swing.JFrame {
             switch (machineType) {
                 case "3":
                     model.setValueAt(machine11Time, i, 1);
+                    model.setValueAt(machine11Total, i, 2);
                     break;
                 case "4":
                     model.setValueAt(machine12Time, i, 1);
+                    model.setValueAt(machine12Total, i, 2);
                     break;
 
             }
@@ -115,9 +136,11 @@ public class MachineStatistics extends javax.swing.JFrame {
             switch (machineType) {
                 case "1":
                     model.setValueAt(machine1Time, i, 1);
+                    model.setValueAt(machine1Total, i, 2);
                     break;
                 case "2":
                     model.setValueAt(machine2Time, i, 1);
+                    model.setValueAt(machine2Total, i, 2);
                     break;
 
             }
@@ -131,9 +154,11 @@ public class MachineStatistics extends javax.swing.JFrame {
             switch (machineType) {
                 case "1":
                     model.setValueAt(machine5Time, i, 1);
+                    model.setValueAt(machine5Total, i, 2);
                     break;
                 case "2":
                     model.setValueAt(machine6Time, i, 1);
+                    model.setValueAt(machine6Total, i, 2);
                     break;
             }
         }
@@ -146,9 +171,11 @@ public class MachineStatistics extends javax.swing.JFrame {
             switch (machineType) {
                 case "1":
                     model.setValueAt(machine3Time, i, 1);
+                    model.setValueAt(machine3Total, i, 2);
                     break;
                 case "2":
                     model.setValueAt(machine4Time, i, 1);
+                    model.setValueAt(machine4Total, i, 2);
                     break;
             }
         }
@@ -161,9 +188,11 @@ public class MachineStatistics extends javax.swing.JFrame {
             switch (machineType) {
                 case "3":
                     model.setValueAt(machine7Time, i, 1);
+                    model.setValueAt(machine7Total, i, 2);
                     break;
                 case "4":
                     model.setValueAt(machine8Time, i, 1);
+                    model.setValueAt(machine8Total, i, 2);
                     break;
             }
         }
@@ -176,9 +205,11 @@ public class MachineStatistics extends javax.swing.JFrame {
             switch (machineType) {
                 case "3":
                     model.setValueAt(machine9Time, i, 1);
+                    model.setValueAt(machine9Total, i, 2);
                     break;
                 case "4":
                     model.setValueAt(machine10Time, i, 1);
+                    model.setValueAt(machine10Total, i, 2);
                     break;
             }
         }

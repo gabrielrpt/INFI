@@ -4,26 +4,279 @@
  */
 package GUI;
 
+import org.OPC_UA.OPCUAClient;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author gabri
  */
 public class Sub_MachineStats extends javax.swing.JFrame {
+    OPCUAClient client;
+
+    ScheduledExecutorService executorService;
+    int machine1Type3, machine1Type4, machine1Type6, machine1Type7, machine1Type8,
+            machine2Type3, machine2Type4, machine2Type6, machine2Type7, machine2Type8,
+            machine3Type3, machine3Type4, machine3Type6, machine3Type7, machine3Type8,
+            machine4Type3, machine4Type4, machine4Type6, machine4Type7, machine4Type8,
+            machine5Type3, machine5Type4, machine5Type6, machine5Type7, machine5Type8,
+            machine6Type3, machine6Type4, machine6Type6, machine6Type7, machine6Type8;
+    int machine7Type3, machine7Type5, machine7Type7, machine7Type9,
+            machine8Type3, machine8Type5, machine8Type7, machine8Type9,
+            machine9Type3, machine9Type5, machine9Type7, machine9Type9,
+            machine10Type3, machine10Type5, machine10Type7, machine10Type9,
+            machine11Type3, machine11Type5, machine11Type7, machine11Type9,
+            machine12Type3, machine12Type5, machine12Type7, machine12Type9;
 
     /**
      * Creates new form Sub_MachineStats
      */
     public Sub_MachineStats() {
+        client = new OPCUAClient();
+
+        try {
+            client.connect("opc.tcp://localhost:4840");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // handle the exception
+        }
         initComponents();
         Toolkit toolkit = getToolkit();
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
+
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::updateMachinePerPieceTotals, 0, 1, TimeUnit.SECONDS);
+    }
+
+    private void updateMachinePerPieceTotals(){
+        machine1Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.n_peca3", 4);
+        machine1Type4 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.n_peca4", 4);
+        machine1Type6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.n_peca6", 4);
+        machine1Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.n_peca7", 4);
+        machine1Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M11.n_peca8", 4);
+        machine2Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.n_peca3", 4);
+        machine2Type4 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.n_peca4", 4);
+        machine2Type6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.n_peca6", 4);
+        machine2Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.n_peca7", 4);
+        machine2Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M21.n_peca8", 4);
+        machine3Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.n_peca3", 4);
+        machine3Type4 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.n_peca4", 4);
+        machine3Type6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.n_peca6", 4);
+        machine3Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.n_peca7", 4);
+        machine3Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M12.n_peca8", 4);
+        machine4Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.n_peca3", 4);
+        machine4Type4 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.n_peca4", 4);
+        machine4Type6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.n_peca6", 4);
+        machine4Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.n_peca7", 4);
+        machine4Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M22.n_peca8", 4);
+        machine5Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.n_peca3", 4);
+        machine5Type4 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.n_peca4", 4);
+        machine5Type6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.n_peca6", 4);
+        machine5Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.n_peca7", 4);
+        machine5Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M13.n_peca8", 4);
+        machine6Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_peca3", 4);
+        machine6Type4 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_peca4", 4);
+        machine6Type6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_peca6", 4);
+        machine6Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_peca7", 4);
+        machine6Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_peca8", 4);
+        machine7Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca3", 4);
+        machine7Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca5", 4);
+        machine7Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca7", 4);
+        machine7Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca9", 4);
+        machine8Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca3", 4);
+        machine8Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca5", 4);
+        machine8Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca7", 4);
+        machine8Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca9", 4);
+        machine9Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca3", 4);
+        machine9Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca5", 4);
+        machine9Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca7", 4);
+        machine9Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca9", 4);
+        machine10Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca3", 4);
+        machine10Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca5", 4);
+        machine10Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca7", 4);
+        machine10Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca9", 4);
+        machine11Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca3", 4);
+        machine11Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca5", 4);
+        machine11Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca7", 4);
+        machine11Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca9", 4);
+        machine12Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca3", 4);
+        machine12Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca5", 4);
+        machine12Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca7", 4);
+        machine12Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca9", 4);
+        updateTableC6();
+        updateTableC5();
+        updateTableC4();
+        updateTableC3();
+        updateTableC2();
+        updateTableC1();
+    }
+
+    public void updateTableC6() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable13.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine11Type3, i, 1);
+                    model.setValueAt(machine12Type3, i, 2);
+                    break;
+                case "5":
+                    model.setValueAt(machine11Type5, i, 1);
+                    model.setValueAt(machine12Type5, i, 2);
+                    break;
+                case "7":
+                    model.setValueAt(machine11Type7, i, 1);
+                    model.setValueAt(machine12Type7, i, 2);
+                    break;
+                case "9":
+                    model.setValueAt(machine11Type9, i, 1);
+                    model.setValueAt(machine12Type9, i, 2);
+                    break;
+            }
+
+        }
+    }
+    public void updateTableC5() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable16.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine9Type3, i, 1);
+                    model.setValueAt(machine10Type3, i, 2);
+                    break;
+                case "5":
+                    model.setValueAt(machine9Type5, i, 1);
+                    model.setValueAt(machine10Type5, i, 2);
+                    break;
+                case "7":
+                    model.setValueAt(machine9Type7, i, 1);
+                    model.setValueAt(machine10Type7, i, 2);
+                    break;
+                case "9":
+                    model.setValueAt(machine9Type9, i, 1);
+                    model.setValueAt(machine10Type9, i, 2);
+                    break;
+            }
+
+        }
+    }
+    public void updateTableC4() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable9.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine7Type3, i, 1);
+                    model.setValueAt(machine8Type3, i, 2);
+                    break;
+                case "5":
+                    model.setValueAt(machine7Type5, i, 1);
+                    model.setValueAt(machine8Type5, i, 2);
+                    break;
+                case "7":
+                    model.setValueAt(machine7Type7, i, 1);
+                    model.setValueAt(machine8Type7, i, 2);
+                    break;
+                case "9":
+                    model.setValueAt(machine7Type9, i, 1);
+                    model.setValueAt(machine8Type9, i, 2);
+                    break;
+            }
+        }
+    }
+    public void updateTableC3() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable15.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine5Type3, i, 1);
+                    model.setValueAt(machine6Type3, i, 2);
+                    break;
+                case "4":
+                    model.setValueAt(machine5Type4, i, 1);
+                    model.setValueAt(machine6Type4, i, 2);
+                    break;
+                case "6":
+                    model.setValueAt(machine5Type6, i, 1);
+                    model.setValueAt(machine6Type6, i, 2);
+                    break;
+                case "7":
+                    model.setValueAt(machine5Type7, i, 1);
+                    model.setValueAt(machine6Type7, i, 2);
+                    break;
+                case "8":
+                    model.setValueAt(machine5Type8, i, 1);
+                    model.setValueAt(machine6Type8, i, 2);
+                    break;
+            }
+        }
+    }
+    public void updateTableC2() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable8.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine3Type3, i, 1);
+                    model.setValueAt(machine4Type3, i, 2);
+                    break;
+                case "4":
+                    model.setValueAt(machine3Type4, i, 1);
+                    model.setValueAt(machine4Type4, i, 2);
+                    break;
+                case "6":
+                    model.setValueAt(machine3Type6, i, 1);
+                    model.setValueAt(machine4Type6, i, 2);
+                    break;
+                case "7":
+                    model.setValueAt(machine3Type7, i, 1);
+                    model.setValueAt(machine4Type7, i, 2);
+                    break;
+                case "8":
+                    model.setValueAt(machine3Type8, i, 1);
+                    model.setValueAt(machine4Type8, i, 2);
+                    break;
+            }
+        }
+    }
+    public void updateTableC1() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable14.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "3":
+                    model.setValueAt(machine1Type3, i, 1);
+                    model.setValueAt(machine2Type3, i, 2);
+                    break;
+                case "4":
+                    model.setValueAt(machine1Type4, i, 1);
+                    model.setValueAt(machine2Type4, i, 2);
+                    break;
+                case "6":
+                    model.setValueAt(machine1Type6, i, 1);
+                    model.setValueAt(machine2Type6, i, 2);
+                    break;
+                case "7":
+                    model.setValueAt(machine1Type7, i, 1);
+                    model.setValueAt(machine2Type7, i, 2);
+                    break;
+                case "8":
+                    model.setValueAt(machine1Type8, i, 1);
+                    model.setValueAt(machine2Type8, i, 2);
+                    break;
+            }
+        }
     }
 public void currentDate(){
         Calendar cal= new GregorianCalendar();
@@ -77,7 +330,7 @@ public void currentDate(){
 
         jTable13.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
+                {"3", null, null},//C6
                 {"5", null, null},
                 {"7", null, null},
                 {"9", null, null}
@@ -96,7 +349,7 @@ public void currentDate(){
 
         jTable8.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
+                {"3", null, null},//C2
                 {"4", null, null},
                 {"6", null, null},
                 {"7", null, null},
@@ -116,7 +369,7 @@ public void currentDate(){
 
         jTable9.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
+                {"3", null, null},//C4
                 {"5", null, null},
                 {"7", null, null},
                 {"9", null, null}
@@ -135,7 +388,7 @@ public void currentDate(){
 
         jTable14.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
+                {"3", null, null},//C1
                 {"4", null, null},
                 {"6", null, null},
                 {"7", null, null},
@@ -156,7 +409,7 @@ public void currentDate(){
 
         jTable15.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
+                {"3", null, null},//C3
                 {"4", null, null},
                 {"6", null, null},
                 {"7", null, null},
@@ -176,7 +429,7 @@ public void currentDate(){
 
         jTable16.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},
+                {"3", null, null},//C5
                 {"5", null, null},
                 {"7", null, null},
                 {"9", null, null}
