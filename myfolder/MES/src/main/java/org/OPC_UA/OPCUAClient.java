@@ -173,7 +173,28 @@ public class OPCUAClient {
         }
     }
 
-
+    public int readInt16(String variable, int index) {
+        String ID = variable;
+        NodeId nodeId = new NodeId(index, ID);
+        DataValue value;
+        try {
+            double maxAge = 0;
+            value = myclient.readValue(maxAge, TimestampsToReturn.Both, nodeId).get();
+            if (value != null) {
+                Object intValue = value.getValue().getValue();
+                if (intValue instanceof Short) {
+                    return ((Short) intValue).intValue();
+                } else {
+                    throw new IllegalArgumentException("Unexpected type: " + intValue.getClass());
+                }
+            } else {
+                throw new IllegalArgumentException("Value is null");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
 
 
