@@ -121,7 +121,10 @@ public class OPCUAClient {
 
         // Read the warehouse array
         int[] warehouseArray = readWarehouseArray(warehouseNode, 4);
-
+        //print the value of pieceType inside the array
+        if(warehouseNumber == 1 && pieceType == 4){
+            System.out.println("Value of pieceType inside the array: " + warehouseArray[pieceType]);
+        }
         // Return the quantity of the specified piece type
         return warehouseArray[pieceType];
     }
