@@ -20,6 +20,7 @@ public class ShopFloor {
         int  outPiece2;
 
         if (rawPiece.equals("P1")) {
+            System.out.println("Processing order for P1 pieces");
             // Start a new thread for transformP1toP4
             new Thread(() -> transformP1toP4(quantity, 1, 3, 3, 4)).start();
             // Start a new thread for checkAndExtractP4
@@ -174,9 +175,11 @@ public class ShopFloor {
 
     public void transformP1toP4(int quantity, int inPiece1, int outPiece1, int inPiece2, int outPiece2){
         int unfinishedPieces = quantity;
+        System.out.println("Transforming P1 to P4");
         while(unfinishedPieces > 0) {
             //NOTE: conveyorNumber offsets go from 5 to 10
             if(isEntryConveyorFree(5)){
+                System.out.println("Conveyor 5 is free");
                 client.writeMInPiece(inPiece1, 0);
                 client.writeMOutPiece(outPiece1, 0);
                 client.writeWOutPiece(inPiece1, 0);
@@ -187,6 +190,7 @@ public class ShopFloor {
             client.writeMOutPiece(outPiece2, 1);
 
             if(isEntryConveyorFree(6) && unfinishedPieces > 0){
+                System.out.println("Conveyor 6 is free");
                 client.writeMInPiece(inPiece1, 2);
                 client.writeMOutPiece(outPiece1, 2);
                 client.writeWOutPiece(inPiece1, 1);
@@ -197,6 +201,7 @@ public class ShopFloor {
             client.writeMOutPiece(outPiece2, 3);
 
             if(isEntryConveyorFree(7) && unfinishedPieces > 0){
+                System.out.println("Conveyor 7 is free");
                 client.writeMInPiece(inPiece1, 4);
                 client.writeMOutPiece(outPiece1, 4);
                 client.writeWOutPiece(inPiece1, 2);
@@ -212,7 +217,11 @@ public class ShopFloor {
         String variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C" + conveyorNumber + ".recv_I";
         DataValue value = client.read(variable, 4);
         if (value != null && value.getValue().getValue() != null) {
-            return value.getValue().getValue().equals("0");
+            //System.out.println("Conveyor " + conveyorNumber + " is free: " + value.getValue().getValue().equals("false"));
+            // print the get value
+            System.out.println(value.getValue().getValue());
+
+            return value.getValue().getValue().equals("false");
         }
         return false;
     }
