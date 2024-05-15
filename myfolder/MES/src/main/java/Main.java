@@ -2,7 +2,11 @@ import Logic.OrderHandling;
 import Logic.Orders;
 import Logic.ShopFloor;
 import org.OPC_UA.OPCUAClient;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,25 +39,53 @@ public class Main {
 
         //Create a list to store the orders
         List<Orders> orderList = new ArrayList<>();
+
         //Create a current production day variable
         AtomicInteger prodDay = new AtomicInteger(1);
+
         //Create a new thread that runs every 60 seconds
-        Thread orderHandlingThread = new Thread(() -> {
+        Thread orderUpdatingThread = new Thread(() -> {
             while (true) {
-                orderHandling.getOrdersByProdDay(prodDay.get(), orderList);
-                if (!orderList.isEmpty()) {
-                    System.out.println("Orders for production day " + prodDay.get());
-                    //Call the function process order on the first order from orderlist
-                    shopFloor.processOrder(orderList.get(0));
-                }
-                prodDay.getAndIncrement();
+                orderHandling.getOrdersByProdDay(0, orderList);
                 try {
-                    Thread.sleep(6000000);
+                    Thread.sleep(60000); // Sleep for 60 seconds
+                    prodDay.getAndIncrement(); // Increment the production day
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
-        orderHandlingThread.start();
+        orderUpdatingThread.start();
+
+        Thread orderProcessingThread = new Thread(() -> {
+            while (true) {
+                if (!orderList.isEmpty()) {
+                    // Sort the order list based on the production day
+                    orderList.sort(Comparator.comparingInt(Orders::getProductionDay));
+
+                    System.out.println("Orders for production day " + prodDay.get());
+                    // Process each order in the order list
+                    Iterator<Orders> iterator = orderList.iterator();
+                    while (iterator.hasNext()) {
+                        Orders order = iterator.next();
+                        if (order.getProductionDay() <= prodDay.get()) {
+                            try {
+                                shopFloor.processOrder(order);
+                                //remove the order from the orderList
+                                iterator.remove();
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(1000); // Sleep for 1 second before checking the order list again
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        orderProcessingThread.start();
     }
 }

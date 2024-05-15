@@ -1,7 +1,9 @@
 package Logic;
+import database.javaDatabase;
 import org.OPC_UA.OPCUAClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
+import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -13,7 +15,7 @@ public class ShopFloor {
     }
 
 
-    public void processOrder(Orders order) {
+    public void processOrder(Orders order) throws SQLException {
         String rawPiece = order.getRawPiece();
         String workPiece = order.getWorkPiece();
         int finalPiece = order.getWorkPieceNumber();
@@ -36,10 +38,16 @@ public class ShopFloor {
             }
             transformP4toFinal(quantity, 4, finalPiece);
             checkAndExtractPX(quantity, current, finalPiece);
+            //print a string saying that the order has been completed
+            javaDatabase.setOrderComplete(order.getOrderNumber());
+            System.out.println("Order completed");
         } else {
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             transformP2toFinal(quantity, 2, 8, 8, outPiece2);
             checkAndExtractPX(quantity, current, finalPiece);
+            //print a string saying that the order has been completed
+            javaDatabase.setOrderComplete(order.getOrderNumber());
+            System.out.println("Order completed");
         }
     }
 
@@ -94,13 +102,19 @@ public class ShopFloor {
     public void transformP2toFinal(int quantity, int inPiece1, int outPiece1, int inPiece2, int outPiece2){
         int unfinishedPieces = quantity;
         while(unfinishedPieces > 0) {
-
+            //print
+            System.out.println("Transforming P2 to final piece");
             //NOTE: conveyorNumber offsets go from 5 to 10
             if(isEntryConveyorFree(8)){
                 client.writeMInPiece(inPiece1, 6);
                 client.writeMOutPiece(outPiece1, 6);
                 client.writeWOutPiece(inPiece1, 3);
                 unfinishedPieces--;
+                try {
+                    Thread.sleep(2000); // delay of 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             client.writeMInPiece(inPiece2, 7);
@@ -111,6 +125,11 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece1, 8);
                 client.writeWOutPiece(inPiece1, 4);
                 unfinishedPieces--;
+                try {
+                    Thread.sleep(2000); // delay of 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             client.writeMInPiece(inPiece2, 9);
@@ -121,6 +140,11 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece1, 10);
                 client.writeWOutPiece(inPiece1, 5);
                 unfinishedPieces--;
+                try {
+                    Thread.sleep(2000); // delay of 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             client.writeMInPiece(inPiece2, 11);
@@ -145,6 +169,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 6);
                     client.writeWOutPiece(inPiece1, 3);
                     quantity--;
+                    try {
+                        Thread.sleep(2000); // delay of 1 second
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 client.writeMInPiece(outPiece1, 7);
                 client.writeMOutPiece(outPiece1, 7);
@@ -154,6 +183,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 8);
                     client.writeWOutPiece(inPiece1, 4);
                     quantity--;
+                    try {
+                        Thread.sleep(2000); // delay of 1 second
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 client.writeMInPiece(outPiece1, 9);
                 client.writeMOutPiece(outPiece1, 9);
@@ -163,6 +197,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 10);
                     client.writeWOutPiece(inPiece1, 5);
                     quantity--;
+                    try {
+                        Thread.sleep(2000); // delay of 1 second
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 client.writeMInPiece(outPiece1, 11);
                 client.writeMOutPiece(outPiece1, 11);
@@ -183,6 +222,11 @@ public class ShopFloor {
 
                     System.out.println("Conveyor 5 is free");
                     quantity--;
+                    try {
+                        Thread.sleep(2000); // delay of 1 second
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 client.writeMInPiece(outPiece1, 1);
                 client.writeMOutPiece(outPiece1, 1);
@@ -193,6 +237,11 @@ public class ShopFloor {
                     client.writeWOutPiece(inPiece1, 1);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
                     quantity--;
+                    try {
+                        Thread.sleep(2000); // delay of 1 second
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 client.writeMInPiece(outPiece1, 3);
                 client.writeMOutPiece(outPiece1, 3);
@@ -203,6 +252,11 @@ public class ShopFloor {
                     client.writeWOutPiece(inPiece1, 2);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
                     quantity--;
+                    try {
+                        Thread.sleep(2000); // delay of 1 second
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 client.writeMInPiece(outPiece1, 5);
                 client.writeMOutPiece(outPiece1, 5);
@@ -227,33 +281,51 @@ public class ShopFloor {
                 client.writeMInPiece(inPiece1, 0);
                 client.writeMOutPiece(outPiece1, 0);
                 client.writeWOutPiece(inPiece1, 0);
+                client.writeMInPiece(inPiece2, 1);
+                client.writeMOutPiece(outPiece2, 1);
                 unfinishedPieces--;
+                try {
+                    Thread.sleep(2000); // delay of 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
-            client.writeMInPiece(inPiece2, 1);
-            client.writeMOutPiece(outPiece2, 1);
+
 
             if(isEntryConveyorFree(6) && unfinishedPieces > 0){
                 System.out.println("Conveyor 6 is free");
                 client.writeMInPiece(inPiece1, 2);
                 client.writeMOutPiece(outPiece1, 2);
                 client.writeWOutPiece(inPiece1, 1);
+                client.writeMInPiece(inPiece2, 3);
+                client.writeMOutPiece(outPiece2, 3);
                 unfinishedPieces--;
+                try {
+                    Thread.sleep(2000); // delay of 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
-            client.writeMInPiece(inPiece2, 3);
-            client.writeMOutPiece(outPiece2, 3);
+
 
             if(isEntryConveyorFree(7) && unfinishedPieces > 0){
                 System.out.println("Conveyor 7 is free");
                 client.writeMInPiece(inPiece1, 4);
                 client.writeMOutPiece(outPiece1, 4);
                 client.writeWOutPiece(inPiece1, 2);
+                client.writeMInPiece(inPiece2, 5);
+                client.writeMOutPiece(outPiece2, 5);
                 unfinishedPieces--;
+                try {
+                    Thread.sleep(2000); // delay of 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
-            client.writeMInPiece(inPiece2, 5);
-            client.writeMOutPiece(outPiece2, 5);
+
 
             try {
                 Thread.sleep(2000); // delay of 1 second

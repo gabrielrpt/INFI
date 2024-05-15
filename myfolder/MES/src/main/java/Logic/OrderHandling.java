@@ -19,6 +19,7 @@ public class OrderHandling {
 
     public void getOrdersByProdDay(int prodDay, List<Orders> orderList) {
         try {
+            boolean flag = true;
             ResultSet rs = javaDatabase.getOrdersByProdDay(prodDay);
             while (rs.next()) {
                 String orderNumber = rs.getString("ordernumber");
@@ -36,10 +37,17 @@ public class OrderHandling {
                 //print the orders
                 System.out.println("Order Number: " + orderNumber + " Work Piece: " + workPiece + " Quantity: " + quantity + " Due Date: " + dueDate + " Late Penalty: " + latePenalty + " Early Penalty: " + earlyPenalty + " Production Day: " + productionDay);
 
-                Orders order = new Orders(orderNumber, workPiece, rawPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
-                orderList.add(order);
-
-
+                //iterate over the orderList and check if the order is already in the list
+                for (Orders order : orderList) {
+                    if (order.getOrderNumber().equals(orderNumber)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    Orders order = new Orders(orderNumber, workPiece, rawPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
+                    orderList.add(order);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

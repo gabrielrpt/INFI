@@ -85,6 +85,9 @@ public class javaDatabase {
             Connection connection = DriverManager.getConnection(databaseUrl, user, password);
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             String SQLQuery = "SELECT * FROM erpmes.orders WHERE productionday = " + productionDay + ";";
+            if (productionDay == 0) {
+                SQLQuery = "SELECT * FROM erpmes.orders WHERE ordercomplete IS NULL;";
+            }
             resultSet = statement.executeQuery(SQLQuery);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,8 +95,10 @@ public class javaDatabase {
         return resultSet;
     }
 
-
-
+        public static int setOrderComplete(String orderNumber) throws SQLException {
+            String SQLQuery = "UPDATE erpmes." + ordersTable + " SET ordercomplete = 1 WHERE ordernumber = '" + orderNumber + "';";
+            return newEntry(SQLQuery, databaseUrl, user, password);
+        }
 
         public static int getResultSetSize(ResultSet resultSet) {
         int size = 0;

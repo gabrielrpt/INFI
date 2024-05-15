@@ -94,4 +94,5 @@ public class Orders {
     public void setRawPiece(String rawPiece) {
         this.rawPiece = rawPiece;
     }
+
 }
