@@ -69,14 +69,93 @@ public class Main {
                     while (iterator.hasNext()) {
                         Orders order = iterator.next();
                         if (order.getProductionDay() <= prodDay.get()) {
-                            try {
-                                shopFloor.processOrder(order);
-                                //remove the order from the orderList
-                                iterator.remove();
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
+                            // If the order is of type 6, process it in a separate thread
+                            if (order.getWorkPieceNumber() == 6) {
+                                boolean flag = false;
+                                Orders nextOrder = null;
+                                // Find the next order of type 7 or 9 and process it simultaneously
+                                Iterator<Orders> iterator2 = orderList.iterator();
+                                while (iterator2.hasNext()) {
+                                    nextOrder = iterator2.next();
+                                    if (nextOrder.getWorkPieceNumber() == 7 || nextOrder.getWorkPieceNumber() == 9) {
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    // Process the order in a separate thread
+                                    Orders finalNextOrder = nextOrder;
+                                    new Thread(() -> {
+                                        try {
+                                            shopFloor.processOrder(finalNextOrder);
+                                            //remove the order from the orderList
+                                            iterator2.remove();
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }).start();
+                                }
+
+                                try {
+                                    shopFloor.processOrder(order);
+                                    //remove the order from the orderList
+                                    iterator.remove();
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            } else if(order.getWorkPieceNumber() == 7 || order.getWorkPieceNumber() == 9){
+                                // If the order is of type 7 or 9, process it in a separate thread
+                                boolean flag = false;
+                                Orders nextOrder = null;
+                                // Find the next order of type 7 or 9 and process it simultaneously
+                                Iterator<Orders> iterator2 = orderList.iterator();
+                                while (iterator2.hasNext()) {
+                                    nextOrder = iterator2.next();
+                                    if (nextOrder.getWorkPieceNumber() == 6) {
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    // Process the order in a separate thread
+                                    new Thread(() -> {
+                                        try {
+                                            shopFloor.processOrder(order);
+                                            //remove the order from the orderList
+                                            iterator2.remove();
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }).start();
+                                    try {
+                                        shopFloor.processOrder(nextOrder);
+                                        //remove the order from the orderList
+                                        iterator.remove();
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                } else {
+                                    // If the order is not of type 6, process it normally
+                                    try {
+                                        shopFloor.processOrder(order);
+                                        //remove the order from the orderList
+                                        iterator.remove();
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                    } else {
+                                        // If the order is not of type 6, process it normally
+                                        try {
+                                            shopFloor.processOrder(order);
+                                            //remove the order from the orderList
+                                            iterator.remove();
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+                                }
                     }
                 }
                 try {
