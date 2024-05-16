@@ -63,7 +63,7 @@ public class OrderManagement {
                         System.out.println("Order " + order.getOrderNumber() + " is completed.");
                         order.calculateTotalCost();
                         // Send order to database
-                        insertOrderCost(order.getTotalCost());
+                        insertOrderCost(order.getTotalCost(), order.getOrderNumber());
                         iterator.remove();
                         flag = false;
                     }
@@ -110,7 +110,7 @@ public class OrderManagement {
             // Create an Order object
             Order order = new Order(orderNumber, workPiece, quantity, dueDate, latePenalty, earlyPenalty);
             orderList.add(order);
-            insertOrder(order.getOrderNumber(), order.getWorkPiece(), order.getQuantity(), order.getDueDate(), order.getLatePenalty(), order.getEarlyPenalty());
+            insertOrder(order.getOrderNumber(), order.getWorkPiece(), order.getQuantity(), order.getDueDate(), order.getLatePenalty(), order.getEarlyPenalty(), order.getProductionDay());
             server.order = order;
             mainMenu.productionPlan.updateTableDay(order.getProductionDay(), Integer.parseInt(orderNumber));
             System.out.println("supplier: " + order.getSupplier()[0] + order.getSupplier()[1] + order.getSupplier()[2] + order.getSupplier()[3] + order.getSupplier()[4] + order.getSupplier()[5] + order.getSupplier()[6]);

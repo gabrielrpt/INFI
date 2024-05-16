@@ -4,6 +4,12 @@ import java.util.*;
 
 public class Plans {
     // Define the supplier and product information
+
+    private final static int P1toP4 = 60;
+    private final static int P2toP8 = 45;
+    private final static int TransportTime = 5;
+    private final static int WManagementTime = 1;
+
     static String[][] supplierInfo = {
             {"SupplierA", "P1", "16", "30", "4 days"},
             {"SupplierA", "P2", "16", "10", "4 days"},
@@ -25,10 +31,10 @@ public class Plans {
             {"P8", "P7", "T6", "15"},
             {"P8", "P9", "T5", "45"}
     };
-    public static String[] getBestSupplier(String pieceType, int requiredQuantity, int dueDate, double latePenalty, double earlyPenalty) {
+    public static String[] getBestSupplier(String pieceType, int requiredQuantity, int dueDate, double latePenalty, double earlyPenalty, String workP, int quantity) {
         String[] bestSupplier = null;
         double minCost = Double.MAX_VALUE;
-        int transformationTime = 0;
+        int transformationTime = prodTime(pieceType, workP, quantity);
         int purchasingDay = 0;
         int deliveryTime = 0;
 
@@ -142,5 +148,49 @@ public class Plans {
             }
         }
         return productionSchedule;
+    }
+
+    public static int prodTime(String rawP, String workP, int quantity) {
+
+        int workPiece = Integer.parseInt(workP.substring(1));
+        int rawPiece = Integer.parseInt(rawP.substring(1));
+        int time = 0;
+
+        if(rawPiece == 1){
+            time += P1toP4;
+            time += WManagementTime*7;
+            time += TransportTime*3;
+        }
+        if(rawPiece == 2){
+            time += P2toP8;
+            time += WManagementTime*3;
+            time += TransportTime;
+        }
+
+        if(workPiece == 5 || workPiece == 6){
+            time += 25;
+        }
+
+        if(workPiece == 7){
+            time += 15;
+        }
+
+        if(workPiece == 9){
+            time += 45;
+        }
+
+        // Calculate the number of full batches of 3 pieces
+        int fullBatches = quantity / 3;
+
+        // Calculate the number of remaining pieces
+        int remainingPieces = quantity % 3;
+
+        // Calculate the total number of batches
+        int totalBatches = fullBatches + (remainingPieces > 0 ? 1 : 0);
+
+        // Multiply the time by the total number of batches
+        time *= totalBatches;
+
+        return time;
     }
 }

@@ -59,14 +59,14 @@ public class javaDatabase {
     }
 
     // Create method insertOrder
-    public static int insertOrder(String orderNumber, String workPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty) throws SQLException {
-        String SQLQuery = "INSERT INTO erpmes." + ordersTable + " (ordernumber, workpiece, quantity, duedate, latepen, earlypen) VALUES ('" + orderNumber + "', '" + workPiece + "', " + quantity + ", " + dueDate + ", " + latePenalty + ", " + earlyPenalty + ");";
+    public static int insertOrder(String orderNumber, String workPiece, int quantity, int dueDate, double latePenalty, double earlyPenalty, int prodDay) throws SQLException {
+        String SQLQuery = "INSERT INTO erpmes." + ordersTable + " (ordernumber, workpiece, quantity, duedate, latepen, earlypen, productionday) VALUES ('" + orderNumber + "', '" + workPiece + "', " + quantity + ", " + dueDate + ", " + latePenalty + ", " + earlyPenalty + ", " + prodDay + ");";
         System.out.println(SQLQuery);
         return newEntry(SQLQuery, databaseUrl, user, password);
     }
 
-    public static int insertOrderCost(double orderCost) throws SQLException {
-        String SQLQuery = "UPDATE erpmes." + ordersTable + " SET ordercost = "+ orderCost +" WHERE ordernumber = '124';";
+    public static int insertOrderCost(double orderCost, String orderNumber) throws SQLException {
+        String SQLQuery = "UPDATE erpmes." + ordersTable + " SET ordercost = "+ orderCost +" WHERE ordernumber = '" + orderNumber + "';";
         return newEntry(SQLQuery, databaseUrl, user, password);
     }
 

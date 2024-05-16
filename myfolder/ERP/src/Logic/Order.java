@@ -37,7 +37,7 @@ public class Order {
     //Create a piece object for each piece in the order
     public void createPieces() throws SQLException {
         String rawPiece = Plans.getRawPiece(Plans.getFastestPathFromAll(Plans.getAllPaths(workPiece)));
-        String[] supplier = Plans.getBestSupplier(rawPiece, quantity, dueDate, latePenalty, earlyPenalty);
+        String[] supplier = Plans.getBestSupplier(rawPiece, quantity, dueDate, latePenalty, earlyPenalty, workPiece, quantity);
         this.supplier = supplier;
         double rawCost = Double.parseDouble(supplier[3]);
         this.purchasingDay = Integer.parseInt(supplier[5]);
