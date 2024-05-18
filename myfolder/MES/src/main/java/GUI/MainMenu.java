@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
  * @author gabri
  */
 public class MainMenu extends javax.swing.JFrame {
+    public OrderStatus OrderStatus = new OrderStatus();
 
     /**
      * Creates new form MainMenu

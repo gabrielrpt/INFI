@@ -4,26 +4,46 @@
  */
 package GUI;
 
+import org.OPC_UA.OPCUAClient;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author gabri
  */
 public class UnloadingDocks extends javax.swing.JFrame {
-
+    OPCUAClient client;
+    int unl1P5, unl1P6, unl1P7, unl1P9, P5Total,
+    unl2P5, unl2P6, unl2P7, unl2P9, P6Total,
+    unl3P5, unl3P6, unl3P7, unl3P9, P7Total,
+    unl4P5, unl4P6, unl4P7, unl4P9, P9Total;
+    ScheduledExecutorService executorService;
     /**
      * Creates new form UnloadingDocks
      */
     public UnloadingDocks() {
+        client = new OPCUAClient();
+
+        try {
+            client.connect("opc.tcp://localhost:4840");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // handle the exception
+        }
         initComponents();
        Toolkit toolkit = getToolkit();
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::updateStatistic, 0, 1, TimeUnit.SECONDS);
     }
 public void currentDate(){
         Calendar cal= new GregorianCalendar();
@@ -32,6 +52,66 @@ public void currentDate(){
         int day = cal.get(Calendar.DAY_OF_MONTH);
        
        jLabel3.setText(day+"/"+(month+1)+"/" + year);
+    }
+    private void updateStatistic(){
+        unl1P5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca5", 4);
+        unl1P6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca6", 4);
+        unl1P7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca7", 4);
+        unl1P9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca9", 4);
+        P5Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UPieceTotal[0]",4);
+        unl2P5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C18.npeca5", 4);
+        unl2P6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C18.npeca6", 4);
+        unl2P7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C18.npeca7", 4);
+        unl2P9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C18.npeca9", 4);
+        P6Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UPieceTotal[1]",4);
+        unl3P5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C19.npeca5", 4);
+        unl3P6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C19.npeca6", 4);
+        unl3P7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C19.npeca7", 4);
+        unl3P9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C19.npeca9", 4);
+        P7Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UPieceTotal[2]",4);
+        unl4P5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C20.npeca5", 4);
+        unl4P6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C20.npeca6", 4);
+        unl4P7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C20.npeca7", 4);
+        unl4P9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C20.npeca9", 4);
+        P9Total = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UPieceTotal[3]",4);
+        updateTable();
+    }
+
+    public void updateTable(){
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String machineType = (String) model.getValueAt(i, 0);
+            switch (machineType) {
+                case "5":
+                    model.setValueAt(unl1P5, i, 1);
+                    model.setValueAt(unl2P5, i, 2);
+                    model.setValueAt(unl3P5, i, 3);
+                    model.setValueAt(unl4P5, i, 4);
+                    model.setValueAt(P5Total, i, 5);
+                    break;
+                case "6":
+                    model.setValueAt(unl1P6, i, 1);
+                    model.setValueAt(unl2P6, i, 2);
+                    model.setValueAt(unl3P6, i, 3);
+                    model.setValueAt(unl4P6, i, 4);
+                    model.setValueAt(P6Total, i, 5);
+                    break;
+                case "7":
+                    model.setValueAt(unl1P7, i, 1);
+                    model.setValueAt(unl2P7, i, 2);
+                    model.setValueAt(unl3P7, i, 3);
+                    model.setValueAt(unl4P7, i, 4);
+                    model.setValueAt(P7Total, i, 5);
+                    break;
+                case "9":
+                    model.setValueAt(unl1P9, i, 1);
+                    model.setValueAt(unl2P9, i, 2);
+                    model.setValueAt(unl3P9, i, 3);
+                    model.setValueAt(unl4P9, i, 4);
+                    model.setValueAt(P9Total, i, 5);
+                    break;
+            }
+        }
     }
     
     
