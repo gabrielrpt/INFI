@@ -6,7 +6,6 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 public class ShopFloor {
     private final OPCUAClient client;
 
@@ -41,6 +40,8 @@ public class ShopFloor {
             //print a string saying that the order has been completed
             javaDatabase.setOrderComplete(order.getOrderNumber());
             System.out.println("Order completed");
+            allPiecesCompleted();
+
         } else {
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
@@ -64,6 +65,7 @@ public class ShopFloor {
             //print a string saying that the order has been completed
             javaDatabase.setOrderComplete(order.getOrderNumber());
             System.out.println("Order completed");
+            allPiecesCompleted();
         }
     }
 
@@ -149,6 +151,7 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece2, 7);
                 client.writeWOutPiece(inPiece1, 3);
                 unfinishedPieces--;
+                updateStats();
                 try {
                     Thread.sleep(2000); // delay of 1 second
                 } catch (InterruptedException e) {
@@ -164,6 +167,7 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece2, 9);
                 client.writeWOutPiece(inPiece1, 4);
                 unfinishedPieces--;
+                updateStats();
                 try {
                     Thread.sleep(2000); // delay of 1 second
                 } catch (InterruptedException e) {
@@ -178,6 +182,7 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece2, 11);
                 client.writeWOutPiece(inPiece1, 5);
                 unfinishedPieces--;
+                updateStats();
                 try {
                     Thread.sleep(2000); // delay of 1 second
                 } catch (InterruptedException e) {
@@ -206,6 +211,7 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 7);
                     client.writeWOutPiece(inPiece1, 3);
                     quantity--;
+                    updateStats();
                     try {
                         Thread.sleep(2000); // delay of 1 second
                     } catch (InterruptedException e) {
@@ -220,6 +226,7 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 9);
                     client.writeWOutPiece(inPiece1, 4);
                     quantity--;
+                    updateStats();
                     try {
                         Thread.sleep(2000); // delay of 1 second
                     } catch (InterruptedException e) {
@@ -234,6 +241,7 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 11);
                     client.writeWOutPiece(inPiece1, 5);
                     quantity--;
+                    updateStats();
                     try {
                         Thread.sleep(2000); // delay of 1 second
                     } catch (InterruptedException e) {
@@ -259,6 +267,7 @@ public class ShopFloor {
 
                     System.out.println("Conveyor 5 is free");
                     quantity--;
+                    updateStats();
                     try {
                         Thread.sleep(2000); // delay of 1 second
                     } catch (InterruptedException e) {
@@ -274,6 +283,7 @@ public class ShopFloor {
                     client.writeWOutPiece(inPiece1, 1);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
                     quantity--;
+                    updateStats();
                     try {
                         Thread.sleep(2000); // delay of 1 second
                     } catch (InterruptedException e) {
@@ -289,6 +299,7 @@ public class ShopFloor {
                     client.writeWOutPiece(inPiece1, 2);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
                     quantity--;
+                    updateStats();
                     try {
                         Thread.sleep(2000); // delay of 1 second
                     } catch (InterruptedException e) {
@@ -540,6 +551,18 @@ public class ShopFloor {
             return Boolean.FALSE.equals(value.getValue().getValue());
         }
         return false;
+    }
+
+    //Update the variables in Codesys that are being used in the GUI
+    public void updateStats(){
+        client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[0]", 4,
+                String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[0]", 4)+1));
+        client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[0]", 4,
+                String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[0]", 4)-1));
+    }
+
+    public void allPiecesCompleted(){
+        client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Completed", 4, String.valueOf(1));
     }
 }
 
