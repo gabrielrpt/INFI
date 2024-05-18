@@ -84,7 +84,7 @@ public class javaDatabase {
         try {
             Connection connection = DriverManager.getConnection(databaseUrl, user, password);
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            String SQLQuery = "SELECT * FROM erpmes.orders WHERE productionday = " + productionDay + ";";
+            String SQLQuery = "SELECT * FROM erpmes.orders WHERE productionday = " + productionDay + " AND ordercomplete IS NULL;";
             if (productionDay == 0) {
                 SQLQuery = "SELECT * FROM erpmes.orders WHERE ordercomplete IS NULL;";
             }

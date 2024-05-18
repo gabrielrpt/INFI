@@ -77,7 +77,7 @@ public class Main {
                                 Iterator<Orders> iterator2 = orderList.iterator();
                                 while (iterator2.hasNext()) {
                                     nextOrder = iterator2.next();
-                                    if (nextOrder.getWorkPieceNumber() == 7 || nextOrder.getWorkPieceNumber() == 9) {
+                                    if (nextOrder.getWorkPieceNumber() == 7) {
                                         flag = true;
                                         break;
                                     }
@@ -104,7 +104,7 @@ public class Main {
                                     throw new RuntimeException(e);
                                 }
 
-                            } else if(order.getWorkPieceNumber() == 7 || order.getWorkPieceNumber() == 9){
+                            } else if(order.getWorkPieceNumber() == 7){
                                 // If the order is of type 7 or 9, process it in a separate thread
                                 boolean flag = false;
                                 Orders nextOrder = null;

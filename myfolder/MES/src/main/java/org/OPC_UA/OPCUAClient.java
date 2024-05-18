@@ -205,7 +205,7 @@ public class OPCUAClient {
         OPCUAClient client = new OPCUAClient();
         client.connect("opc.tcp://localhost:4840");  // replace with your OPC UA server's endpoint URL
         DataValue value = client.read("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C1.offset_I", 4);
-
+        //"|var|CODESYS Control Win V3 x64.Application.PLC_PRG.WC11.in_piece"
         // Now you can get the value and its type
         Object val = value.getValue().getValue();
         System.out.println("Value: " + val);
