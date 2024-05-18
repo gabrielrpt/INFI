@@ -120,7 +120,7 @@ public class ShopFloor {
                 } else {
                     int P4Quantity = client.getPieceQuantity(piece, 1);
                     if (P4Quantity > 0) {
-                        while(P4Quantity > 0) {
+                        while(P4Quantity > 0 && remainingQuantity > 0) {
                             client.writeWarehouseArray(1, piece, client.getPieceQuantity(piece, 1) - 1);
                             client.writeWOutPiece(piece, conveyorNumber);
                             P4Quantity--;
