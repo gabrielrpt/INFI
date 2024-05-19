@@ -173,18 +173,6 @@ public class OPCUAClient {
         }
     }
 
-    public void writeTime(String variable, int index, Duration duration) {
-        String ID = variable;
-        NodeId nodeId = new NodeId(index, ID);
-        try {
-            ULong timeValue = ULong.valueOf(duration.toMillis());
-            Variant variant = new Variant(timeValue);
-            DataValue dataValue = new DataValue(variant, StatusCode.GOOD, DateTime.now());
-            myclient.writeValue(nodeId, dataValue).get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public int readInt16(String variable, int index) {
         String ID = variable;

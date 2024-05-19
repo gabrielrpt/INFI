@@ -4,28 +4,154 @@
  */
 package GUI;
 
+import Logic.Orders;
+import database.javaDatabase;
+import org.OPC_UA.OPCUAClient;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
  * @author gabri
  */
-public class OrderStatus extends javax.swing.JFrame {
-
+public class OrderStatus extends javax.swing.JFrame{
+    OPCUAClient client;
     /**
      * Creates new form OrderRequests
      */
     public OrderStatus() {
+        client = new OPCUAClient();
+        try {
+            client.connect("opc.tcp://localhost:4840");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // handle the exception
+        }
+
         initComponents();
         Toolkit toolkit = getToolkit();
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
+        AtomicInteger prodDay = new AtomicInteger(0);
+        List<Orders> orderList = new ArrayList<>();
+        Thread orderUpdatingThread = new Thread(() -> {
+            while (true) {
+                orderCompletedUpdates();
+                getOrdersByProdDay(prodDay.intValue(), orderList);
+                try {
+                    Thread.sleep(60000); // Sleep for 60 seconds
+                    prodDay.getAndIncrement(); // Increment the production day
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        orderUpdatingThread.start();
     }
- public void currentDate(){
+    public void getOrdersByProdDay(int prodDay, List<Orders> orderList) {
+        try {
+            boolean flag = true;
+            System.out.println(prodDay);
+            ResultSet rs = javaDatabase.getOrdersByProdDay(prodDay);
+            while (rs.next()) {
+                String orderNumber = rs.getString("ordernumber");
+                String workPiece = rs.getString("workpiece");
+                int quantity = rs.getInt("quantity");
+                int dueDate = rs.getInt("duedate");
+                double latePenalty = rs.getDouble("latepen");
+                double earlyPenalty = rs.getDouble("earlypen");
+                int productionDay = rs.getInt("productionday");
+
+                ResultSet prs = javaDatabase.getPieceByOrderNumber(orderNumber);
+                prs.next();
+                String rawPiece = prs.getString("rawpiece");
+
+                //print the orders
+                System.out.println("Order Number: " + orderNumber + " Work Piece: " + workPiece + " Quantity: " + quantity + " Due Date: " + dueDate + " Late Penalty: " + latePenalty + " Early Penalty: " + earlyPenalty + " Production Day: " + productionDay);
+
+
+                //iterate over the orderList and check if the order is already in the list
+                for (Orders order : orderList) {
+                    if (order.getOrderNumber().equals(orderNumber)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                //Add the order stats to the GUI and to the Codesys
+                if (flag) {
+                    Orders order = new Orders(orderNumber, workPiece, rawPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
+                    orderList.add(order);
+                    for (int i=0; i<11; i++){
+                        if(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4)==0){
+                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4, order.getOrderNumber());
+                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]", 4, String.valueOf(order.getQuantity()));
+                            break;
+                        }
+                    }
+                    createOrderStatus(order);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Organiza as ordens na GUI e no Codesys após completar a ordem de maior prioridade
+    public void orderCompletedUpdates (){
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        if (client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Completed", 4)==1){ //algum sinal para avisar que a ordem já foi entregue
+            for(int i=0; i<(model.getRowCount()-1); i++){
+                model.setValueAt(model.getValueAt(i+1, 0), i, 0);
+                model.setValueAt(model.getValueAt(i+1, 1), i, 1);
+                model.setValueAt(model.getValueAt(i+1, 2), i, 2);
+                model.setValueAt(model.getValueAt(i+1, 3), i, 3);
+                model.setValueAt(model.getValueAt(i+1, 4), i, 4);
+
+            }
+            model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+4+"]", 4), 3, 0);
+            model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+4+"]", 4), 3, 1);
+            model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+4+"]", 4), 3, 2);
+            model.setValueAt(client.readTime("|var|CODESYS Control Win V3 x64.Application.GVL.OrderDuration["+4+"]", 4), 3, 3);
+
+            model.setValueAt("In Progress", 3, 4);
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Completed", 4, String.valueOf(0));
+            for(int i=0; i<10; i++){
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4,
+                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+(i+1)+"]", 4)));
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]", 4,
+                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+(i+1)+"]", 4)));
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+i+"]", 4,
+                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+(i+1)+"]", 4)));
+                //Fazer para o timer também
+            }
+        }
+    }
+
+    public void createOrderStatus(Orders order){
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        for(int i=0; i<model.getRowCount(); i++){
+            if (model.getValueAt(i, 0)== null ){
+                model.setValueAt(order.getOrderNumber(), i, 0);
+                model.setValueAt(0, i, 1);
+                model.setValueAt(order.getQuantity(), i, 2);
+                model.setValueAt(0, i, 3);
+                model.setValueAt("In Progress", i, 4);
+                break;
+            }
+        }
+    }
+
+
+    public void currentDate(){
         Calendar cal= new GregorianCalendar();
         int month = cal.get(Calendar.MONTH);
         int year= cal.get(Calendar.YEAR);
@@ -33,6 +159,18 @@ public class OrderStatus extends javax.swing.JFrame {
        
         jLabel2.setText(day+"/"+(month+1)+"/" + year);
     }
+    public void updatePiecesAndTime(Orders order){
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        for(int i=0; i<model.getRowCount(); i++){
+            if (model.getValueAt(i, 0)== order.getOrderNumber()){
+
+            }
+        }
+    }
+    public void updateStatus(Orders order){
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -75,10 +213,10 @@ public class OrderStatus extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "5", "0", "-", "Completed"},
-                {"2", null, null, null, null},
-                {"3", null, null, null, null},
-                {"4", null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
                 "Order ID", "Completed Pieces", "Pending Pieces", "Order Duration", "Order Status"
@@ -185,5 +323,7 @@ public class OrderStatus extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+
+
     // End of variables declaration//GEN-END:variables
 }
