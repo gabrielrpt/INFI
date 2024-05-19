@@ -73,13 +73,18 @@ public class ShopFloor {
     private void checkAndExtractPX(int quantity, AtomicInteger current, int piece, int conveyorNumber) {
         // Implement this method to check the warehouse for P4 pieces and extract them
         int remainingQuantity = quantity;
-        if (piece == 4 || (piece == 8 && conveyorNumber == 99)){
+        if ((piece == 4 && conveyorNumber != 99) || (piece == 8 && conveyorNumber == 99)){
             while (remainingQuantity > 0) {
                 int PxQuantity = client.getPieceQuantity(piece, 2);
 
                 if (PxQuantity > 0) {
                     // print the quantity of P4 pieces in the warehouse
                     System.out.println("Pieces in the warehouse: " + PxQuantity);
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     while(PxQuantity > 0) {
                         if(isEntryConveyorFree(16)){
                             client.writeWarehouseArray(2, piece, client.getPieceQuantity(piece, 2) - 1);
@@ -92,7 +97,7 @@ public class ShopFloor {
                             //print the value of current
                             System.out.println("Current: " + current);
                             try {
-                                Thread.sleep(3000); // delay of 3 seconds
+                                Thread.sleep(2000); // Sleep for 60 seconds
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -113,7 +118,7 @@ public class ShopFloor {
                             P4Quantity--;
                             remainingQuantity--;
                             try {
-                                Thread.sleep(3000); // delay of 1 second
+                                Thread.sleep(2000); // Sleep for 60 seconds
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -128,11 +133,6 @@ public class ShopFloor {
                             client.writeWOutPiece(piece, conveyorNumber);
                             P4Quantity--;
                             remainingQuantity--;
-                            try {
-                                Thread.sleep(3000); // delay of 1 second
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
                 }
@@ -152,11 +152,11 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece1, 6);
                 client.writeMInPiece(inPiece2, 7);
                 client.writeMOutPiece(outPiece2, 7);
-                client.writeWOutPiece(inPiece1, 3);
+                checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 3);
                 unfinishedPieces--;
                 updateStats();
                 try {
-                    Thread.sleep(2000); // delay of 1 second
+                    Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -168,11 +168,11 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece1, 8);
                 client.writeMInPiece(inPiece2, 9);
                 client.writeMOutPiece(outPiece2, 9);
-                client.writeWOutPiece(inPiece1, 4);
+                checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 4);
                 unfinishedPieces--;
                 updateStats();
                 try {
-                    Thread.sleep(2000); // delay of 1 second
+                    Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -183,20 +183,14 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece1, 10);
                 client.writeMInPiece(inPiece2, 11);
                 client.writeMOutPiece(outPiece2, 11);
-                client.writeWOutPiece(inPiece1, 5);
+                checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 5);
                 unfinishedPieces--;
                 updateStats();
                 try {
-                    Thread.sleep(2000); // delay of 1 second
+                    Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
-
-            try {
-                Thread.sleep(2000); // delay of 1 second
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
 
         }
@@ -212,11 +206,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 6);
                     client.writeMInPiece(outPiece1, 7);
                     client.writeMOutPiece(outPiece1, 7);
-                    client.writeWOutPiece(inPiece1, 3);
+                    checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 3);
                     quantity--;
                     updateStats();
                     try {
-                        Thread.sleep(2000); // delay of 1 second
+                        Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -227,11 +221,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 8);
                     client.writeMInPiece(outPiece1, 9);
                     client.writeMOutPiece(outPiece1, 9);
-                    client.writeWOutPiece(inPiece1, 4);
+                    checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 4);
                     quantity--;
                     updateStats();
                     try {
-                        Thread.sleep(2000); // delay of 1 second
+                        Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -242,78 +236,64 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 10);
                     client.writeMInPiece(outPiece1, 11);
                     client.writeMOutPiece(outPiece1, 11);
-                    client.writeWOutPiece(inPiece1, 5);
+                    checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 5);
                     quantity--;
                     updateStats();
                     try {
-                        Thread.sleep(2000); // delay of 1 second
+                        Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }
-
-                try {
-                    Thread.sleep(3000); // delay of 3 second
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         } else {
             while(quantity > 0) {
-                if(isEntryConveyorFree(5) && (client.getPieceQuantity(inPiece1, 1)>0)){
+                if(isEntryConveyorFree(5)){
                     client.writeMInPiece(inPiece1, 0);
                     client.writeMOutPiece(outPiece1, 0);
                     client.writeMInPiece(outPiece1, 1);
                     client.writeMOutPiece(outPiece1, 1);
-                    client.writeWOutPiece(inPiece1, 0);
+                    checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 0);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
-
-                    System.out.println("Conveyor 5 is free");
                     quantity--;
                     updateStats();
                     try {
-                        Thread.sleep(2000); // delay of 1 second
+                        Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
 
-                if(isEntryConveyorFree(6) && quantity > 0 && client.getPieceQuantity(inPiece1, 1)!=0){
+                if(isEntryConveyorFree(6) && quantity > 0){
                     client.writeMInPiece(inPiece1, 2);
                     client.writeMOutPiece(outPiece1, 2);
                     client.writeMInPiece(outPiece1, 3);
                     client.writeMOutPiece(outPiece1, 3);
-                    client.writeWOutPiece(inPiece1, 1);
+                    checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 1);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
                     quantity--;
                     updateStats();
                     try {
-                        Thread.sleep(2000); // delay of 1 second
+                        Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
 
-                if(isEntryConveyorFree(7) && quantity > 0 && client.getPieceQuantity(inPiece1, 1)!=0){
+                if(isEntryConveyorFree(7) && quantity > 0){
                     client.writeMInPiece(inPiece1, 4);
                     client.writeMOutPiece(outPiece1, 4);
                     client.writeMInPiece(outPiece1, 5);
                     client.writeMOutPiece(outPiece1, 5);
-                    client.writeWOutPiece(inPiece1, 2);
+                    checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 2);
                     client.writeWarehouseArray(1, inPiece1, client.getPieceQuantity(inPiece1, 1) - 1);
                     quantity--;
                     updateStats();
                     try {
-                        Thread.sleep(2000); // delay of 1 second
+                        Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }
-
-                try {
-                    Thread.sleep(3000); // delay of 3 second
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -334,7 +314,7 @@ public class ShopFloor {
                 checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 0);
                 unfinishedPieces--;
                 try {
-                    Thread.sleep(2000); // delay of 1 second
+                    Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -351,7 +331,7 @@ public class ShopFloor {
                 checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 1);
                 unfinishedPieces--;
                 try {
-                    Thread.sleep(2000); // delay of 1 second
+                    Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -368,20 +348,11 @@ public class ShopFloor {
                 checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 2);
                 unfinishedPieces--;
                 try {
-                    Thread.sleep(2000); // delay of 1 second
+                    Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-
-
-
-            try {
-                Thread.sleep(2000); // delay of 1 second
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
         }
     }
 
@@ -399,6 +370,11 @@ public class ShopFloor {
                     client.writeMOutPiece(0, 0);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 0);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -410,6 +386,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 3);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 1);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -421,6 +402,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 5);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 2);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -432,6 +418,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 7);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 3);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -444,6 +435,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 9);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 4);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -456,6 +452,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 11);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 5);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 if(isEntryConveyorFree(8)){
@@ -466,6 +467,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 7);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 3);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if(isEntryConveyorFree(9) && unfinishedPieces > 0){
@@ -476,6 +482,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 9);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 4);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -488,6 +499,11 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 11);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 5);
                     unfinishedPieces--;
+                    try {
+                        Thread.sleep(2000); // Sleep for 60 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

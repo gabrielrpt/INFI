@@ -41,7 +41,7 @@ public class Main {
         List<Orders> orderList = new ArrayList<>();
 
         //Create a current production day variable
-        AtomicInteger prodDay = new AtomicInteger(1);
+        AtomicInteger prodDay = new AtomicInteger(2);
 
         //Create a new thread that runs every 60 seconds
         Thread orderUpdatingThread = new Thread(() -> {
@@ -89,6 +89,7 @@ public class Main {
                                         try {
                                             shopFloor.processOrder(finalNextOrder);
                                             //remove the order from the orderList
+                                            System.out.println("Current day: " + prodDay.get() + " Order day: " + order.getProductionDay());
                                             iterator2.remove();
                                         } catch (SQLException e) {
                                             throw new RuntimeException(e);
@@ -99,6 +100,7 @@ public class Main {
                                 try {
                                     shopFloor.processOrder(order);
                                     //remove the order from the orderList
+                                    System.out.println("Current day: " + prodDay.get() + " Order day: " + order.getProductionDay());
                                     iterator.remove();
                                 } catch (SQLException e) {
                                     throw new RuntimeException(e);
@@ -123,6 +125,7 @@ public class Main {
                                         try {
                                             shopFloor.processOrder(order);
                                             //remove the order from the orderList
+                                            System.out.println("Current day: " + prodDay.get() + " Order day: " + order.getProductionDay());
                                             iterator2.remove();
                                         } catch (SQLException e) {
                                             throw new RuntimeException(e);
@@ -131,6 +134,7 @@ public class Main {
                                     try {
                                         shopFloor.processOrder(nextOrder);
                                         //remove the order from the orderList
+                                        System.out.println("Current day: " + prodDay.get() + " Order day: " + order.getProductionDay());
                                         iterator.remove();
                                     } catch (SQLException e) {
                                         throw new RuntimeException(e);
@@ -140,6 +144,7 @@ public class Main {
                                     try {
                                         shopFloor.processOrder(order);
                                         //remove the order from the orderList
+                                        System.out.println("Current day: " + prodDay.get() + " Order day: " + order.getProductionDay());
                                         iterator.remove();
                                     } catch (SQLException e) {
                                         throw new RuntimeException(e);
@@ -150,6 +155,7 @@ public class Main {
                                         try {
                                             shopFloor.processOrder(order);
                                             //remove the order from the orderList
+                                            System.out.println("Current day: " + prodDay.get() + " Order day: " + order.getProductionDay());
                                             iterator.remove();
                                         } catch (SQLException e) {
                                             throw new RuntimeException(e);
