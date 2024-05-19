@@ -34,7 +34,9 @@ public class Plans {
     public static String[] getBestSupplier(String pieceType, int requiredQuantity, int dueDate, double latePenalty, double earlyPenalty, String workP, int quantity) {
         String[] bestSupplier = null;
         double minCost = Double.MAX_VALUE;
-        int transformationTime = prodTime(pieceType, workP, quantity);
+        int transformationTimeInSeconds = prodTime(pieceType, workP, quantity);
+        int transformationTime = (int) Math.ceil((double) transformationTimeInSeconds / 60);
+        System.out.println("Transformation Time: " + transformationTime);
         int purchasingDay = 0;
         int deliveryTime = 0;
 
@@ -70,6 +72,9 @@ public class Plans {
             if(pieceType.equals("P1")) bestSupplier = supplierInfo[4];
             else bestSupplier = supplierInfo[5];
         }
+        System.out.println("PurchasingDay: " + purchasingDay);
+        System.out.println("ProdDay: " + (purchasingDay + deliveryTime));
+
         // Add production day to the end of the bestSupplier array
         String[] bestSupplierWithProductionDay = Arrays.copyOf(bestSupplier, bestSupplier.length + 2);
         bestSupplierWithProductionDay[bestSupplierWithProductionDay.length - 2] = String.valueOf(purchasingDay);

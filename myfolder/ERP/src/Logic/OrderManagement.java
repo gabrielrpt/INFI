@@ -125,6 +125,7 @@ public class OrderManagement {
             System.out.println("Late Penalty: €" + latePenalty);
             System.out.println("Early Penalty: €" + earlyPenalty);
             System.out.println("Order List Size:" + orderList.size());
+            System.out.println("Production Day: " + order.getProductionDay());
 
         } else {
             System.out.println("Error: Failed to extract order details from XML.");
