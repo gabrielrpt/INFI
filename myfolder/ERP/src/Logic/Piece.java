@@ -17,12 +17,12 @@ public class Piece {
     private double pieceCost = 0;
     private static final double DEPRECIATION_RATE = 0.01; // 1% depreciation rate
 
-    public Piece(String pieceType, String rawPiece, int orderId, double rawCost) throws SQLException {
+    public Piece(String pieceType, String rawPiece, int orderId, double rawCost, int pid) throws SQLException {
         this.pieceType = pieceType;
         this.rawPiece = rawPiece;
         this.orderId = orderId;
         this.rawCost = rawCost;
-        insertPiece(pieceType, rawPiece, orderId, rawCost);
+        insertPiece(pieceType, rawPiece, orderId, rawCost, pid);
     }
 
     public double calculatePieceCost(double depreciationCost){

@@ -24,6 +24,7 @@ public class ShopFloor {
 
         if (rawPiece.equals("P1")) {
             System.out.println("Processing order for P1 pieces");
+            client.writeOffset(1, true);
             // Start a new thread for transformP1toP4
             new Thread(() -> transformP1toP4(quantity, 1, 3, 3, 4)).start();
             // Start a new thread for checkAndExtractP4
@@ -38,16 +39,20 @@ public class ShopFloor {
             transformP4toFinal(quantity, 4, finalPiece);
             checkAndExtractPX(quantity, current, finalPiece, 99);
             //print a string saying that the order has been completed
+            javaDatabase.setPieceInfo(client.readPieceTimes(), client.readPieceArrivalDay(), client.readPieceDispatchDay(), order.getOrderNumber());
             javaDatabase.setOrderComplete(order.getOrderNumber());
+            client.resetArrays();
             System.out.println("Order completed");
             allPiecesCompleted();
 
         } else {
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
+                client.writeOffset(0, true);
                 transformP2toP7(quantity, 2, 8, 8, outPiece2);
                 checkAndExtractPX(quantity, current, finalPiece, 99);
             } else {
+                client.writeOffset(1, true);
                 // Start a new thread for transformP2toP8
                 new Thread(() -> transformPXtoPX(quantity, 2,8)).start();
                 // Start a new thread for checkAndExtractP4
@@ -56,6 +61,7 @@ public class ShopFloor {
                     //Wait for the transformation to finish
                     if(current.get() == quantity){
                         System.out.println("All P2 pieces have been transformed to P8");
+
                         break;
                     }
                 }
@@ -63,7 +69,9 @@ public class ShopFloor {
                 checkAndExtractPX(quantity, current, finalPiece, 99);
             }
             //print a string saying that the order has been completed
+            javaDatabase.setPieceInfo(client.readPieceTimes(), client.readPieceArrivalDay(), client.readPieceDispatchDay(), order.getOrderNumber());
             javaDatabase.setOrderComplete(order.getOrderNumber());
+            client.resetArrays();
             System.out.println("Order completed");
             allPiecesCompleted();
         }

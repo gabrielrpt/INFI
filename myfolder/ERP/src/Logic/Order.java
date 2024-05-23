@@ -43,7 +43,7 @@ public class Order {
         this.purchasingDay = Integer.parseInt(supplier[5]);
         this.productionDay = Integer.parseInt(supplier[6]);
         for(int i = 0; i < quantity; i++){
-            pieces[i] = new Piece(workPiece, rawPiece, Integer.parseInt(orderNumber), rawCost);
+            pieces[i] = new Piece(workPiece, rawPiece, Integer.parseInt(orderNumber), rawCost, i);
         }
     }
 

@@ -70,8 +70,8 @@ public class javaDatabase {
         return newEntry(SQLQuery, databaseUrl, user, password);
     }
 
-    public static int insertPiece(String pieceName, String rawPiece, int orderNumber, double rawCost) throws SQLException {
-        String SQLQuery = "INSERT INTO erpmes." + piecesTable + " (piecetype, rawpiece, orderid, currenttype, rawcost) VALUES ('" + pieceName + "', '" + rawPiece + "', " + orderNumber + ", '" + rawPiece + "', " + rawCost + ");";
+    public static int insertPiece(String pieceName, String rawPiece, int orderNumber, double rawCost, int pid) throws SQLException {
+        String SQLQuery = "INSERT INTO erpmes." + piecesTable + " (piecetype, rawpiece, orderid, currenttype, rawcost, pid) VALUES ('" + pieceName + "', '" + rawPiece + "', " + orderNumber + ", '" + rawPiece + "', " + rawCost + ", " + pid + ");";
         return newEntry(SQLQuery, databaseUrl, user, password);
     }
 
@@ -87,6 +87,19 @@ public class javaDatabase {
         }
         return resultSet;
     }
+    public static ResultSet getCompletedOrders() {
+        ResultSet resultSet = null;
+        try {
+            Connection connection = DriverManager.getConnection(databaseUrl, user, password);
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            String SQLQuery = "SELECT * FROM erpmes.orders WHERE ordercomplete = 1;";
+            resultSet = statement.executeQuery(SQLQuery);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultSet;
+    }
+
     public static int getResultSetSize(ResultSet resultSet) {
         int size = 0;
         try {

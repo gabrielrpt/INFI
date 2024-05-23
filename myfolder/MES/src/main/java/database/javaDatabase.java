@@ -100,6 +100,21 @@ public class javaDatabase {
             return newEntry(SQLQuery, databaseUrl, user, password);
         }
 
+        public static void setPieceInfo(int [] pieceTimes, int [] pieceAD, int [] pieceDD, String orderid){
+            for (int i = 0; i < pieceAD.length; i++) {
+                if(pieceDD[i] == 0){
+                    break;
+                }
+                String SQLQuery = "UPDATE erpmes." + piecesTable + " SET arrivaldate = " + pieceAD[i] + ", dispatchdate = " + pieceDD[i] + ", productioncost = " + pieceTimes[i] + " WHERE orderid = '" + orderid + "' AND pid = " + i + ";";
+                System.out.println(SQLQuery);
+                try {
+                    newEntry(SQLQuery, databaseUrl, user, password);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         public static int getResultSetSize(ResultSet resultSet) {
         int size = 0;
         try {

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import database.javaDatabase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -40,7 +42,7 @@ public class OrderManagement {
     public ServerERP_MES server;
 
     public void orderManagement() {
-        try (DatagramSocket socket = new DatagramSocket(PORT)) {
+        try (DatagramSocket socket = new DatagramSocket(PORT, null)) {
             System.out.println("OrderReceiver is running...");
             byte[] buffer = new byte[BUFFER_SIZE];
             //checkOrderCompletion();
@@ -64,28 +66,31 @@ public class OrderManagement {
 
     //Create a method that continuously checks if any order in the arraylist is completed and if so, sends it to the database
     public void checkOrderCompletion() throws SQLException {
-        boolean flag = true;
-        //Currently, the method will only check once and then stop
-        while (flag) {
-            if (orderList.isEmpty()) {
-                //System.out.println("No orders to check.");
-            } else {
-                Iterator<Order> iterator = orderList.iterator();
-                while (iterator.hasNext()) {
-                    Order order = iterator.next();
-                    System.out.println("Checking order " + order.getOrderNumber() + "...");
-                    if (order.isComplete()) {
-                        System.out.println("Order " + order.getOrderNumber() + " is completed.");
-                        order.calculateTotalCost();
-                        // Send order to database
-                        insertOrderCost(order.getTotalCost(), order.getOrderNumber());
-                        iterator.remove();
-                        flag = false;
+        ResultSet rs = javaDatabase.getCompletedOrders();
+        if (rs != null) {
+            try {
+                while (rs.next()) {
+                    String orderNumber = rs.getString("ordernumber");
+                    System.out.println("Checking order " + orderNumber + "...");
+                    for (Order order : orderList) {
+                        if (order.getOrderNumber().equals(orderNumber)) {
+                            try {
+                                System.out.println("Checking");
+                                order.calculateTotalCost();
+                                insertOrderCost(order.getTotalCost(), orderNumber);
+                                break;
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
+
 
     private void processOrder(String orderXML) throws SQLException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

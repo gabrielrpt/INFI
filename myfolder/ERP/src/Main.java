@@ -50,11 +50,14 @@ import java.sql.SQLException;
         orderManagementThread.start();
         // Start the order completion checker in a separate thread
         Thread orderCompletionThread = new Thread(() -> {
+            while(true){
                 try {
                     orderManagement.checkOrderCompletion();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+            }
+
         });
         orderCompletionThread.start();
     }

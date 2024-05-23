@@ -59,15 +59,74 @@ public class OPCUAClient {
         }
     }
 
-
-
-
+    public void resetArrays() {
+        for(int i=0; i<24; i++){
+            String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceArrivalDay[" + i + "]";
+            writeInt16(variable, 4, String.valueOf(0));
+            variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceDispatchDay[" + i + "]";
+            writeInt16(variable, 4, String.valueOf(0));
+        }
+    }
 
     //method that writes the inPiece of a machine in the MInPiece array
     public void writeMInPiece(int inPiece, int machineNumber) {
         String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.MInPiece[" + machineNumber + "]";
         writeInt16(variable, 4, String.valueOf(inPiece));
     }
+
+    public void writeOffset(int firstIndex, boolean resetPieces) {
+        for(int i=1; i<7; i++){
+            String variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".first_index";
+            writeInt16(variable, 4, String.valueOf(firstIndex));
+            variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M2" + i + ".first_index";
+            writeInt16(variable, 4, String.valueOf(firstIndex));
+        }
+        if(resetPieces){
+            if(firstIndex == 1) {
+                for (int i = 1; i < 7; i++) {
+                    String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.SupplyPieceNumber";
+                    writeInt16(variable, 4, String.valueOf(0));
+                    variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".pieceNumber";
+                    writeInt16(variable, 4, String.valueOf(i-1));
+                    variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M2" + i + ".pieceNumber";
+                    writeInt16(variable, 4, String.valueOf(i-1));
+                }
+            } else {
+                for (int i = 4; i < 7; i++) {
+                    String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.SupplyPieceNumber";
+                    writeInt16(variable, 4, String.valueOf(0));
+                    variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".pieceNumber";
+                    writeInt16(variable, 4, String.valueOf(i-4));
+                    variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M2" + i + ".pieceNumber";
+                    writeInt16(variable, 4, String.valueOf(i-4));
+                }
+            }
+        }
+    }
+
+    public int [] readPieceTimes() {
+        return new int[24];
+    }
+
+    public int [] readPieceArrivalDay() {
+        int [] pieceArrivalDays = new int[24];
+        for(int i=0; i<24; i++){
+            String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceArrivalDay[" + i + "]";
+            pieceArrivalDays[i] = readInt16(variable, 4);
+        }
+        return pieceArrivalDays;
+    }
+
+    public int []  readPieceDispatchDay() {
+        int [] pieceDispatchDays = new int[24];
+        for(int i=0; i<24; i++){
+            String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceDispatchDay[" + i + "]";
+            pieceDispatchDays[i] = readInt16(variable, 4);
+        }
+        return pieceDispatchDays;
+    }
+
+
     //method that writes the outPiece of a machine in the MOutPiece array
     public void writeMOutPiece(int outPiece, int machineNumber) {
         String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.MOutPiece[" + machineNumber + "]";
