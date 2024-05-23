@@ -41,7 +41,7 @@ public class Main {
         List<Orders> orderList = new ArrayList<>();
 
         //Create a current production day variable
-        AtomicInteger prodDay = new AtomicInteger(2);
+        AtomicInteger prodDay = new AtomicInteger(1);
 
         //Create a new thread that runs every 60 seconds
         Thread orderUpdatingThread = new Thread(() -> {
