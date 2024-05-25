@@ -37,7 +37,7 @@ public class Plans {
         int transformationTimeInSeconds = prodTime(pieceType, workP, quantity);
         int transformationTime = (int) Math.ceil((double) transformationTimeInSeconds / 60);
         System.out.println("Transformation Time: " + transformationTime);
-        int purchasingDay = 0;
+        int purchasingDay = 1;
         int deliveryTime = 0;
 
         for (String[] supplier : supplierInfo) {
@@ -52,7 +52,7 @@ public class Plans {
                 double penalty = 0;
                 if (supplierDeliveryTime + transformationTime > dueDate) {
                     penalty = (supplierDeliveryTime + transformationTime - dueDate) * latePenalty;
-                    purchasingDay = 0; // Set production day to current day
+                    purchasingDay = 1; // Set production day to current day
                 } else if (supplierDeliveryTime + transformationTime < dueDate) {
                     penalty = (dueDate - supplierDeliveryTime - transformationTime) * earlyPenalty;
                     purchasingDay = dueDate - supplierDeliveryTime - transformationTime; // Set production day x days after receiving the order
@@ -66,6 +66,9 @@ public class Plans {
                     bestSupplier = supplier;
                 }
             }
+        }
+        if (purchasingDay < 1) {
+            purchasingDay = 1;
         }
         if(bestSupplier==null){
             System.out.println("No supplier found for piece type: " + pieceType);
