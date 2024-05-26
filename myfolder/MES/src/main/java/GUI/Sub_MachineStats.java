@@ -511,9 +511,6 @@ public void currentDate(){
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
-        MachineStatistics machinestatistics = new MachineStatistics();
-        machinestatistics.setVisible(true);
         this.dispose();
         
         
@@ -521,8 +518,6 @@ public void currentDate(){
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       MainMenu mainmenu = new MainMenu();
-        mainmenu.setVisible(true);
         this.dispose();    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

@@ -1,3 +1,4 @@
+import GUI.MainMenu;
 import Logic.OrderHandling;
 import Logic.Orders;
 import Logic.ShopFloor;
@@ -43,6 +44,11 @@ public class Main {
         //Create a current production day variable
         AtomicInteger prodDay = new AtomicInteger(1);
 
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MainMenu().setVisible(true);
+            }
+        });
         //Create a new thread that runs every 60 seconds
         Thread orderUpdatingThread = new Thread(() -> {
             while (true) {
@@ -69,6 +75,8 @@ public class Main {
                     while (iterator.hasNext()) {
                         Orders order = iterator.next();
                         if (order.getProductionDay() <= prodDay.get()) {
+                            /*
+                        }
                             // If the order is of type 6, process it in a separate thread
                             if (order.getWorkPieceNumber() == 6) {
                                 boolean flag = false;
@@ -150,7 +158,7 @@ public class Main {
                                         throw new RuntimeException(e);
                                     }
                                 }
-                                    } else {
+                                    } else {*/
                                         // If the order is not of type 6, process it normally
                                         try {
                                             shopFloor.processOrder(order);
@@ -160,7 +168,7 @@ public class Main {
                                         } catch (SQLException e) {
                                             throw new RuntimeException(e);
                                         }
-                                    }
+                                    //}
                                 }
                     }
                 }
