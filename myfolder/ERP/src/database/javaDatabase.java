@@ -92,7 +92,7 @@ public class javaDatabase {
         try {
             Connection connection = DriverManager.getConnection(databaseUrl, user, password);
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            String SQLQuery = "SELECT * FROM erpmes.orders WHERE ordercomplete = 1;";
+            String SQLQuery = "SELECT * FROM erpmes.orders WHERE ordercomplete = 1 AND ordercost IS NULL;";
             resultSet = statement.executeQuery(SQLQuery);
         } catch (SQLException e) {
             e.printStackTrace();

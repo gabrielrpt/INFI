@@ -105,7 +105,12 @@ public class OPCUAClient {
     }
 
     public int [] readPieceTimes() {
-        return new int[24];
+        int [] pieceTime = new int[24];
+        for(int i=0; i<24; i++){
+            String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceTime[" + i + "]";
+            pieceTime[i] = readInt16(variable, 4);
+        }
+        return pieceTime;
     }
 
     public int [] readPieceArrivalDay() {

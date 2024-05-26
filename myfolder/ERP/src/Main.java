@@ -53,11 +53,12 @@ import java.sql.SQLException;
             while(true){
                 try {
                     orderManagement.checkOrderCompletion();
-                } catch (SQLException e) {
+                    // Sleep for 60 seconds
+                    Thread.sleep(60000);
+                } catch (SQLException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
-
         });
         orderCompletionThread.start();
     }

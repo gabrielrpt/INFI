@@ -33,6 +33,7 @@ public class ShopFloor {
                 //Wait for the transformation to finish
                 if(current.get() == quantity){
                     System.out.println("All P1 pieces have been transformed to P4");
+                    client.writeOffset(1, true);
                     break;
                 }
             }
@@ -48,11 +49,11 @@ public class ShopFloor {
         } else {
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
-                client.writeOffset(0, true);
+                client.writeOffset(1, true);
                 transformP2toP7(quantity, 2, 8, 8, outPiece2);
                 checkAndExtractPX(quantity, current, finalPiece, 99);
             } else {
-                client.writeOffset(1, true);
+                client.writeOffset(0, true);
                 // Start a new thread for transformP2toP8
                 new Thread(() -> transformPXtoPX(quantity, 2,8)).start();
                 // Start a new thread for checkAndExtractP4
@@ -61,7 +62,7 @@ public class ShopFloor {
                     //Wait for the transformation to finish
                     if(current.get() == quantity){
                         System.out.println("All P2 pieces have been transformed to P8");
-
+                        client.writeOffset(1, true);
                         break;
                     }
                 }

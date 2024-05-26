@@ -76,6 +76,7 @@ public class OrderManagement {
                         if (order.getOrderNumber().equals(orderNumber)) {
                             try {
                                 System.out.println("Checking");
+                                order.isComplete();
                                 order.calculateTotalCost();
                                 insertOrderCost(order.getTotalCost(), orderNumber);
                                 break;
