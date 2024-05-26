@@ -28,12 +28,12 @@ public class Sub_MachineStats extends javax.swing.JFrame {
             machine4Type3, machine4Type4, machine4Type6, machine4Type7, machine4Type8,
             machine5Type3, machine5Type4, machine5Type6, machine5Type7, machine5Type8,
             machine6Type3, machine6Type4, machine6Type6, machine6Type7, machine6Type8;
-    int machine7Type3, machine7Type5, machine7Type7, machine7Type9,
-            machine8Type3, machine8Type5, machine8Type7, machine8Type9,
-            machine9Type3, machine9Type5, machine9Type7, machine9Type9,
-            machine10Type3, machine10Type5, machine10Type7, machine10Type9,
-            machine11Type3, machine11Type5, machine11Type7, machine11Type9,
-            machine12Type3, machine12Type5, machine12Type7, machine12Type9;
+    int machine7Type3, machine7Type5, machine7Type7, machine7Type8,  machine7Type9,
+            machine8Type3, machine8Type5, machine8Type7, machine8Type8, machine8Type9,
+            machine9Type3, machine9Type5, machine9Type7, machine9Type8, machine9Type9,
+            machine10Type3, machine10Type5, machine10Type7, machine10Type8, machine10Type9,
+            machine11Type3, machine11Type5, machine11Type7, machine11Type8, machine11Type9,
+            machine12Type3, machine12Type5, machine12Type7, machine12Type8, machine12Type9;
 
     /**
      * Creates new form Sub_MachineStats
@@ -91,26 +91,32 @@ public class Sub_MachineStats extends javax.swing.JFrame {
         machine7Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca3", 4);
         machine7Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca5", 4);
         machine7Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca7", 4);
+        machine7Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca8", 4);
         machine7Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M14.n_peca9", 4);
         machine8Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca3", 4);
         machine8Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca5", 4);
         machine8Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca7", 4);
+        machine8Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca8", 4);
         machine8Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M24.n_peca9", 4);
         machine9Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca3", 4);
         machine9Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca5", 4);
         machine9Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca7", 4);
+        machine9Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca8", 4);
         machine9Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M15.n_peca9", 4);
         machine10Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca3", 4);
         machine10Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca5", 4);
         machine10Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca7", 4);
+        machine10Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca8", 4);
         machine10Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M25.n_peca9", 4);
         machine11Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca3", 4);
         machine11Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca5", 4);
         machine11Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca7", 4);
+        machine11Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M23.n_peca8", 4);
         machine11Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M16.n_peca9", 4);
         machine12Type3 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca3", 4);
         machine12Type5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca5", 4);
         machine12Type7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca7", 4);
+        machine12Type8 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca8", 4);
         machine12Type9 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M26.n_peca9", 4);
         updateTableC6();
         updateTableC5();
@@ -330,10 +336,11 @@ public void currentDate(){
 
         jTable13.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"3", null, null},//C6
-                {"5", null, null},
-                {"7", null, null},
-                {"9", null, null}
+                    {"3", null, null},//C6
+                    {"5", null, null},
+                    {"7", null, null},
+                    {"8", null, null},
+                    {"9", null, null}
             },
             new String [] {
                 "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
@@ -372,6 +379,7 @@ public void currentDate(){
                 {"3", null, null},//C4
                 {"5", null, null},
                 {"7", null, null},
+                    {"8", null, null},
                 {"9", null, null}
             },
             new String [] {
@@ -432,6 +440,7 @@ public void currentDate(){
                 {"3", null, null},//C5
                 {"5", null, null},
                 {"7", null, null},
+                    {"8", null, null},
                 {"9", null, null}
             },
             new String [] {

@@ -125,6 +125,10 @@ public class ShopFloor {
                         int batch = 0;
                         while(result>0){
                             while(PxQuantity > 0 && batch<6) {
+                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[0]", 4, String.valueOf(piece));
+                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[1]", 4, String.valueOf(piece));
+                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[2]", 4, String.valueOf(piece));
+                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[3]", 4, String.valueOf(piece));
                                 client.writeWarehouseArray(2, piece, client.getPieceQuantity(piece, 2) - 1);
                                 client.writeWarehouseArray(2, 0, client.getPieceQuantity(0, 2) - 1);
                                 client.writeWOutPiece(piece, convNumber);
