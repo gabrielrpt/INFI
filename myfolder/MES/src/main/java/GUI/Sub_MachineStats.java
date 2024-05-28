@@ -143,6 +143,10 @@ public class Sub_MachineStats extends javax.swing.JFrame {
                     model.setValueAt(machine11Type7, i, 1);
                     model.setValueAt(machine12Type7, i, 2);
                     break;
+                case "8":
+                    model.setValueAt(machine11Type8, i, 1);
+                    model.setValueAt(machine12Type8, i, 2);
+                    break;
                 case "9":
                     model.setValueAt(machine11Type9, i, 1);
                     model.setValueAt(machine12Type9, i, 2);
@@ -168,6 +172,10 @@ public class Sub_MachineStats extends javax.swing.JFrame {
                     model.setValueAt(machine9Type7, i, 1);
                     model.setValueAt(machine10Type7, i, 2);
                     break;
+                case "8":
+                    model.setValueAt(machine9Type8, i, 1);
+                    model.setValueAt(machine10Type8, i, 2);
+                    break;
                 case "9":
                     model.setValueAt(machine9Type9, i, 1);
                     model.setValueAt(machine10Type9, i, 2);
@@ -192,6 +200,10 @@ public class Sub_MachineStats extends javax.swing.JFrame {
                 case "7":
                     model.setValueAt(machine7Type7, i, 1);
                     model.setValueAt(machine8Type7, i, 2);
+                    break;
+                case "8":
+                    model.setValueAt(machine7Type8, i, 1);
+                    model.setValueAt(machine8Type8, i, 2);
                     break;
                 case "9":
                     model.setValueAt(machine7Type9, i, 1);
