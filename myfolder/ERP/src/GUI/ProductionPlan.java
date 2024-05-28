@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,6 +23,8 @@ public class ProductionPlan extends javax.swing.JFrame {
     /**
      * Creates new form ProductionPlan
      */
+    private int lastTableDay = 5;
+    private DefaultTableModel model;
     public ProductionPlan() {
         initComponents();
         Toolkit toolkit = getToolkit();
@@ -36,6 +40,15 @@ public class ProductionPlan extends javax.swing.JFrame {
         int day = cal.get(Calendar.DAY_OF_MONTH);
        
         jLabel7.setText(day+"/"+(month+1)+"/" + year);
+    }
+    private void addNewDayColumn() {
+        lastTableDay++;
+        String newColumnName = "Day " + lastTableDay + " Orders";
+        model.addColumn(newColumnName);
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(null, i, model.getColumnCount() - 1);
+        }
+        jTable5.getColumnModel().getColumn(model.getColumnCount() - 1).setPreferredWidth(80);
     }
     
     /**
@@ -79,7 +92,7 @@ public class ProductionPlan extends javax.swing.JFrame {
         getContentPane().add(jLabel7);
         jLabel7.setBounds(620, 50, 100, 16);
 
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+        model = new DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -93,11 +106,17 @@ public class ProductionPlan extends javax.swing.JFrame {
             new String [] {
                 "Day 1 Orders", "Day 2 Orders", "Day 3 Orders", "Day 4 Orders", "Day 5 Orders"
             }
-        ));
+        );
+        jTable5.setModel(model);
+        jTable5.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jTable5.setGridColor(new java.awt.Color(0, 0, 0));
         jTable5.setRowHeight(25);
         jTable5.setShowGrid(true);
+        for (int i = 0; i < jTable5.getColumnCount(); i++) {
+            jTable5.getColumnModel().getColumn(i).setPreferredWidth(100); // Set each column's preferred width
+        }
         jScrollPane5.setViewportView(jTable5);
+        jScrollPane5.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         getContentPane().add(jScrollPane5);
         jScrollPane5.setBounds(150, 100, 452, 230);
@@ -115,47 +134,13 @@ public class ProductionPlan extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    public void startTableShift() {
-        Timer timer = new Timer(60000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shiftTable();
-            }
-        });
-        timer.start();
-    }
 
-    private void shiftTable() {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable5.getModel();
-        int columnCount = model.getColumnCount();
-        int rowCount = model.getRowCount();
-        Object[][] newData = new Object[rowCount][columnCount];
-        String[] newColumnNames = new String[columnCount];
-
-        // Shift data and column names
-        for (int i = 0; i < columnCount - 1; i++) {
-            newColumnNames[i] = model.getColumnName(i + 1);
-            for (int j = 0; j < rowCount; j++) {
-                newData[j][i] = model.getValueAt(j, i + 1);
-            }
-        }
-
-        // Parse day number from last column's name
-        String lastColumnName = model.getColumnName(columnCount - 1);
-        int lastDayNumber = Integer.parseInt(lastColumnName.split(" ")[1]);
-
-        // Add new column
-        newColumnNames[columnCount - 1] = "Day " + (lastDayNumber + 1) + " Orders";
-        for (int j = 0; j < rowCount; j++) {
-            newData[j][columnCount - 1] = null;
-        }
-
-        // Set new model
-        model.setDataVector(newData, newColumnNames);
-    }
 
     public void updateTableDay(int day, int orderNumber) {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable5.getModel();
+        while(day > lastTableDay) {
+            addNewDayColumn();
+        }
         for(int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
             String currentDay = model.getColumnName(columnIndex);
             if(currentDay.equals("Day " + day + " Orders")) {

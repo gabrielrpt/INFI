@@ -9,6 +9,8 @@ import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
 
 /**
  *
@@ -19,6 +21,8 @@ public class MPS extends javax.swing.JFrame {
     /**
      * Creates new form MPS
      */
+    private int lastTableDay = 5;
+    private DefaultTableModel model;
     public MPS() {
         initComponents();
         Toolkit toolkit = getToolkit();
@@ -35,6 +39,17 @@ public class MPS extends javax.swing.JFrame {
        
         jLabel6.setText(day+"/"+(month+1)+"/" + year);
     }
+
+    private void addNewDayColumn() {
+        lastTableDay++;
+        String newColumnName = "Day " + lastTableDay;
+        model.addColumn(newColumnName);
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(null, i, model.getColumnCount() - 1);
+        }
+        jTable3.getColumnModel().getColumn(model.getColumnCount() - 1).setPreferredWidth(80);
+    }
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -79,7 +94,7 @@ public class MPS extends javax.swing.JFrame {
         getContentPane().add(jLabel6);
         jLabel6.setBounds(760, 80, 100, 16);
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        model = new DefaultTableModel(
             new Object [][] {
                 {"P1", null, null, null, null, null},
                 {"P2", null, null, null, null, null},
@@ -96,12 +111,20 @@ public class MPS extends javax.swing.JFrame {
             new String [] {
                 "", "Day 1", "Day 2", "Day 3", "Day 4", "Day 5"
             }
-        ));
+        );
+        jTable3.setModel(model);
+        jTable3.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jTable3.setGridColor(new java.awt.Color(0, 0, 0));
         jTable3.setRowHeight(25);
         jTable3.setShowGrid(true);
         jTable3.setShowHorizontalLines(true);
+
+        for (int i = 0; i < jTable3.getColumnCount(); i++) {
+            jTable3.getColumnModel().getColumn(i).setPreferredWidth(87); // Set each column's preferred width
+        }
+
         jScrollPane3.setViewportView(jTable3);
+        jScrollPane3.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);  // Enable horizontal scroll bar
 
         getContentPane().add(jScrollPane3);
         jScrollPane3.setBounds(200, 140, 540, 300);
@@ -120,12 +143,15 @@ public class MPS extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public void updateTable(Map<Integer, String> productionSchedule) {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable3.getModel();
+        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
         for (Map.Entry<Integer, String> entry : productionSchedule.entrySet()) {
             int day = entry.getKey();
             String[] pieceInfo = entry.getValue().split(" ");
             String pieceType = pieceInfo[0];
             String quantity = pieceInfo[1];
+            while(day > lastTableDay) {
+                addNewDayColumn();
+            }
             System.out.println("Piece: " + pieceType + " Quantity: " + quantity + " Day: " + day);
             for (int i = 0; i < model.getRowCount(); i++) {
                 if (model.getValueAt(i, 0).equals(pieceType)) {
@@ -139,6 +165,7 @@ public class MPS extends javax.swing.JFrame {
             }
         }
     }
+
 
     /**
      * @param args the command line arguments

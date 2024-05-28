@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,13 +25,14 @@ public class PurchasingPlan extends javax.swing.JFrame {
     /**
      * Creates new form PurchasingPlan
      */
+    private int lastTableDay = 5;
+    private DefaultTableModel model;
     public PurchasingPlan() {
         initComponents();
         Toolkit toolkit = getToolkit();
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
-        //startTableShift();
 
     }
    public void currentDate(){
@@ -39,6 +42,15 @@ public class PurchasingPlan extends javax.swing.JFrame {
         int day = cal.get(Calendar.DAY_OF_MONTH);
        
         jLabel7.setText(day+"/"+(month+1)+"/" + year);
+    }
+    private void addNewDayColumn() {
+        lastTableDay++;
+        String newColumnName = "Day " + lastTableDay;
+        model.addColumn(newColumnName);
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(null, i, model.getColumnCount() - 1);
+        }
+        jTable1.getColumnModel().getColumn(model.getColumnCount() - 1).setPreferredWidth(80);
     }
     
     /**
@@ -87,7 +99,7 @@ public class PurchasingPlan extends javax.swing.JFrame {
         getContentPane().add(jLabel7);
         jLabel7.setBounds(660, 40, 100, 16);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        model = new DefaultTableModel(
             new Object [][] {
                 {"A", "P1", null, null, null, null, null},
                 {"A", "P2", null, null, null, null, null},
@@ -99,11 +111,19 @@ public class PurchasingPlan extends javax.swing.JFrame {
             new String [] {
                 "Supplier", "Piece", "Day 1", "Day 2", "Day 3", "Day 4", "Day 5"
             }
-        ));
+        );
+        jTable1.setModel(model);
+        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jTable1.setGridColor(new java.awt.Color(0, 0, 0));
         jTable1.setRowHeight(25);
         jTable1.setShowGrid(true);
+        for (int i = 0; i < jTable1.getColumnCount(); i++) {
+            jTable1.getColumnModel().getColumn(i).setPreferredWidth(100); // Set each column's preferred width
+        }
+
+
         jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         getContentPane().add(jScrollPane1);
         jScrollPane1.setBounds(70, 90, 830, 180);
@@ -129,11 +149,17 @@ public class PurchasingPlan extends javax.swing.JFrame {
 
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         int columnCount = model.getColumnCount();
+        while(purchasingDay >= lastTableDay) {
+            addNewDayColumn();
+            columnCount++;
+        }
 
         // Check if the purchasing day is present in the column labels
         for (int j = 2; j < columnCount; j++) { // Start from 2 because day columns start from 2
+            System.out.println(Integer.parseInt(model.getColumnName(j).substring(4)));
             if (Integer.parseInt(model.getColumnName(j).substring(4)) == purchasingDay) { // Extract day from column name "Day X"
                 // If the purchasing day is present, loop through the rows to find the matching supplier and piece type
+                System.out.println("its in");
                 for (int i = 0; i < model.getRowCount(); i++) {
                     if (model.getValueAt(i, 0).equals(supplier) && model.getValueAt(i, 1).equals(pieceType)) {
                         model.setValueAt(quantity, i, j);
@@ -146,50 +172,7 @@ public class PurchasingPlan extends javax.swing.JFrame {
         }
     }
 
-    public void startTableShift() {
-        Timer timer = new Timer(60000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shiftDataAndIncreaseDay();
-            }
-        });
-        timer.start();
-    }
 
-    public void shiftDataAndIncreaseDay() {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-        int columnCount = model.getColumnCount();
-        int rowCount = model.getRowCount();
-
-        // Shift data to the left
-        for (int i = 0; i < rowCount; i++) {
-            for (int j = 2; j < columnCount - 1; j++) {
-                model.setValueAt(model.getValueAt(i, j + 1), i, j);
-            }
-            model.setValueAt(null, i, columnCount - 1);
-        }
-
-        // Get current column names
-        String[] columnNames = new String[columnCount];
-        for (int i = 0; i < columnCount; i++) {
-            columnNames[i] = model.getColumnName(i);
-        }
-
-        // Shift column names to the left
-        for (int i = 2; i < columnCount - 1; i++) {
-            columnNames[i] = columnNames[i + 1];
-        }
-
-        // Parse day number from last column's name
-        String lastColumnName = columnNames[columnCount - 2];
-        int lastDayNumber = Integer.parseInt(lastColumnName.split(" ")[1]);
-
-        // Update column name for the last column
-        columnNames[columnCount - 1] = "Day " + (lastDayNumber + 1);
-
-        // Set updated column names back to the model
-        model.setColumnIdentifiers(columnNames);
-    }
 
     /**
      * @param args the command line arguments
