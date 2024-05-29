@@ -8,6 +8,7 @@ import Logic.Orders;
 import database.javaDatabase;
 import org.OPC_UA.OPCUAClient;
 
+import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.sql.ResultSet;
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,6 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class OrderStatus extends javax.swing.JFrame{
     OPCUAClient client;
+    ScheduledExecutorService executorService;
+    long startTime;
     /**
      * Creates new form OrderRequests
      */
@@ -41,114 +47,91 @@ public class OrderStatus extends javax.swing.JFrame{
         Dimension size= toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2,size.height/2-getHeight()/2);
         currentDate();
-        AtomicInteger prodDay = new AtomicInteger(0);
-        List<Orders> orderList = new ArrayList<>();
-        Thread orderUpdatingThread = new Thread(() -> {
-            while (true) {
-                orderCompletedUpdates();
-                getOrdersByProdDay(prodDay.intValue(), orderList);
-                try {
-                    Thread.sleep(60000); // Sleep for 60 seconds
-                    prodDay.getAndIncrement(); // Increment the production day
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        orderUpdatingThread.start();
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::updateOrderStatus, 0, 1, TimeUnit.SECONDS);
+        //executorService.scheduleAtFixedRate(this::orderCompletedUpdates, 0, 1, TimeUnit.SECONDS);
     }
-    public void getOrdersByProdDay(int prodDay, List<Orders> orderList) {
-        try {
-            boolean flag = true;
-            System.out.println(prodDay);
-            ResultSet rs = javaDatabase.getOrdersByProdDay(prodDay);
-            while (rs.next()) {
-                String orderNumber = rs.getString("ordernumber");
-                String workPiece = rs.getString("workpiece");
-                int quantity = rs.getInt("quantity");
-                int dueDate = rs.getInt("duedate");
-                double latePenalty = rs.getDouble("latepen");
-                double earlyPenalty = rs.getDouble("earlypen");
-                int productionDay = rs.getInt("productionday");
-
-                ResultSet prs = javaDatabase.getPieceByOrderNumber(orderNumber);
-                prs.next();
-                String rawPiece = prs.getString("rawpiece");
-
-                //print the orders
-                System.out.println("Order Number: " + orderNumber + " Work Piece: " + workPiece + " Quantity: " + quantity + " Due Date: " + dueDate + " Late Penalty: " + latePenalty + " Early Penalty: " + earlyPenalty + " Production Day: " + productionDay);
-
-
-                //iterate over the orderList and check if the order is already in the list
-                for (Orders order : orderList) {
-                    if (order.getOrderNumber().equals(orderNumber)) {
-                        flag = false;
-                        break;
-                    }
-                }
-                //Add the order stats to the GUI and to the Codesys
-                if (flag) {
-                    Orders order = new Orders(orderNumber, workPiece, rawPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
-                    orderList.add(order);
-                    for (int i=0; i<11; i++){
-                        if(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4)==0){
-                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4, order.getOrderNumber());
-                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]", 4, String.valueOf(order.getQuantity()));
-                            break;
-                        }
-                    }
-                    createOrderStatus(order);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    private void updateOrderStatus() {
+        SwingUtilities.invokeLater(() -> {
+            orderCompletedUpdates();
+            createOrderStatus();
+            firstOrderUpdate();
+        });
     }
 
     //Organiza as ordens na GUI e no Codesys após completar a ordem de maior prioridade
     public void orderCompletedUpdates (){
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         if (client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Completed", 4)==1){ //algum sinal para avisar que a ordem já foi entregue
-            for(int i=0; i<(model.getRowCount()-1); i++){
-                model.setValueAt(model.getValueAt(i+1, 0), i, 0);
-                model.setValueAt(model.getValueAt(i+1, 1), i, 1);
-                model.setValueAt(model.getValueAt(i+1, 2), i, 2);
-                model.setValueAt(model.getValueAt(i+1, 3), i, 3);
-                model.setValueAt(model.getValueAt(i+1, 4), i, 4);
-
-            }
-            model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+4+"]", 4), 3, 0);
-            model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+4+"]", 4), 3, 1);
-            model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+4+"]", 4), 3, 2);
-            model.setValueAt(client.readTime("|var|CODESYS Control Win V3 x64.Application.GVL.OrderDuration["+4+"]", 4), 3, 3);
-
-            model.setValueAt("In Progress", 3, 4);
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Completed", 4, String.valueOf(0));
-            for(int i=0; i<10; i++){
-                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4,
-                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+(i+1)+"]", 4)));
-                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]", 4,
-                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+(i+1)+"]", 4)));
-                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+i+"]", 4,
-                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+(i+1)+"]", 4)));
-                //Fazer para o timer também
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(0));
+            for (int i = 0; i < 10; i++) {
+                if (client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + (i + 1) + "]", 4) == 0) {
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + i + "]", 4, String.valueOf(0));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + i + "]", 4, String.valueOf(0));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[" + i + "]", 4, String.valueOf(0));
+                    break;
+                } else {
+                    System.out.println("Atualiza os valores");
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + i + "]", 4,
+                            String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + (i + 1) + "]", 4)));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + i + "]", 4,
+                            String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + (i + 1) + "]", 4)));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[" + i + "]", 4,
+                            String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[" + (i + 1) + "]", 4)));
+                }
             }
+            // Update the GUI table to reflect these changes
+            for (int i = 0; i < model.getRowCount() - 1; i++) {
+                model.setValueAt(null, i, 0);
+                model.setValueAt(null, i, 1);
+                model.setValueAt(null, i, 2);
+                model.setValueAt(null, i, 3);
+                model.setValueAt(null, i, 4);
+            }
+            int lastRow = model.getRowCount() - 1;
+            model.setValueAt(null, lastRow, 0);
+            model.setValueAt(null, lastRow, 1);
+            model.setValueAt(null, lastRow, 2);
+            model.setValueAt(null, lastRow, 3);
+            model.setValueAt(null, lastRow, 4);
         }
     }
 
-    public void createOrderStatus(Orders order){
+
+    public void createOrderStatus(){
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         for(int i=0; i<model.getRowCount(); i++){
-            if (model.getValueAt(i, 0)== null ){
-                model.setValueAt(order.getOrderNumber(), i, 0);
-                model.setValueAt(0, i, 1);
-                model.setValueAt(order.getQuantity(), i, 2);
+            if (model.getValueAt(i, 0)== null && client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4) != 0){
+                System.out.println("OrderStatus");
+                model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4), i, 0);
+                model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+i+"]",4),  i, 1);
+                model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]",4), i, 2);
                 model.setValueAt(0, i, 3);
-                model.setValueAt("In Progress", i, 4);
-                break;
+                model.setValueAt("Waiting", i, 4);
             }
         }
     }
+
+    public void firstOrderUpdate(){
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[0]", 4), 0, 0);
+        model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[0]",4),  0, 1);
+        model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[0]",4), 0, 2);
+        if (client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4)==1){
+            startTime = System.currentTimeMillis();
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(0));
+            client.writeInt64("|var|CODESYS Control Win V3 x64.Application.GVL.StartTime", 4, String.valueOf(startTime));
+        }
+        if (client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4)==1){
+            model.setValueAt("In Progress", 0, 4);
+            long endTime = System.currentTimeMillis();  // Stop timer
+            long tim=client.readInt64("|var|CODESYS Control Win V3 x64.Application.GVL.StartTime", 4);
+            long elapsedTime = (endTime - tim) /1000;
+            model.setValueAt(elapsedTime, 0, 3);
+        }
+    }
+
 
 
     public void currentDate(){
@@ -159,18 +142,6 @@ public class OrderStatus extends javax.swing.JFrame{
        
         jLabel2.setText(day+"/"+(month+1)+"/" + year);
     }
-    public void updatePiecesAndTime(Orders order){
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-        for(int i=0; i<model.getRowCount(); i++){
-            if (model.getValueAt(i, 0)== order.getOrderNumber()){
-
-            }
-        }
-    }
-    public void updateStatus(Orders order){
-
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -54,7 +54,6 @@ public void currentDate(){
        jLabel3.setText(day+"/"+(month+1)+"/" + year);
     }
     private void updateStatistic(){
-        System.out.println("Updating statistics");
         unl1P5 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca5", 4);
         unl1P6 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca6", 4);
         unl1P7 = client.readInt16("|var|CODESYS Control Win V3 x64.Application.PLC_PRG.C17.npeca7", 4);

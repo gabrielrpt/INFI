@@ -296,12 +296,12 @@ public class Sub_MachineStats extends javax.swing.JFrame {
             }
         }
     }
-public void currentDate(){
+    public void currentDate(){
         Calendar cal= new GregorianCalendar();
         int month = cal.get(Calendar.MONTH);
         int year= cal.get(Calendar.YEAR);
         int day = cal.get(Calendar.DAY_OF_MONTH);
-       
+
         jLabel9.setText(day+"/"+(month+1)+"/" + year);
     }
     /**
@@ -347,16 +347,16 @@ public void currentDate(){
         jLabel1.setBounds(500, 10, 520, 36);
 
         jTable13.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                    {"3", null, null},//C6
-                    {"5", null, null},
-                    {"7", null, null},
-                    {"8", null, null},
-                    {"9", null, null}
-            },
-            new String [] {
-                "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
-            }
+                new Object [][] {
+                        {"3", null, null},//C6
+                        {"5", null, null},
+                        {"7", null, null},
+                        {"8", null, null},
+                        {"9", null, null}
+                },
+                new String [] {
+                        "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
+                }
         ));
         jTable13.setCellSelectionEnabled(true);
         jTable13.setGridColor(new java.awt.Color(0, 0, 0));
@@ -367,16 +367,16 @@ public void currentDate(){
         jScrollPane13.setBounds(690, 390, 640, 90);
 
         jTable8.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"3", null, null},//C2
-                {"4", null, null},
-                {"6", null, null},
-                {"7", null, null},
-                {"8", null, null}
-            },
-            new String [] {
-                "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
-            }
+                new Object [][] {
+                        {"3", null, null},//C2
+                        {"4", null, null},
+                        {"6", null, null},
+                        {"7", null, null},
+                        {"8", null, null}
+                },
+                new String [] {
+                        "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
+                }
         ));
         jTable8.setCellSelectionEnabled(true);
         jTable8.setGridColor(new java.awt.Color(0, 0, 0));
@@ -387,16 +387,16 @@ public void currentDate(){
         jScrollPane8.setBounds(20, 220, 640, 110);
 
         jTable9.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"3", null, null},//C4
-                {"5", null, null},
-                {"7", null, null},
-                    {"8", null, null},
-                {"9", null, null}
-            },
-            new String [] {
-                "Piece Type", "Quantity Produced by Machine Type 3", "Quantity Produced by Machine Type 4"
-            }
+                new Object [][] {
+                        {"3", null, null},//C4
+                        {"5", null, null},
+                        {"7", null, null},
+                        {"8", null, null},
+                        {"9", null, null}
+                },
+                new String [] {
+                        "Piece Type", "Quantity Produced by Machine Type 3", "Quantity Produced by Machine Type 4"
+                }
         ));
         jTable9.setCellSelectionEnabled(true);
         jTable9.setGridColor(new java.awt.Color(0, 0, 0));
@@ -407,16 +407,16 @@ public void currentDate(){
         jScrollPane9.setBounds(690, 90, 640, 110);
 
         jTable14.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"3", null, null},//C1
-                {"4", null, null},
-                {"6", null, null},
-                {"7", null, null},
-                {"8", null, null}
-            },
-            new String [] {
-                "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
-            }
+                new Object [][] {
+                        {"3", null, null},//C1
+                        {"4", null, null},
+                        {"6", null, null},
+                        {"7", null, null},
+                        {"8", null, null}
+                },
+                new String [] {
+                        "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
+                }
         ));
         jTable14.setCellSelectionEnabled(true);
         jTable14.setGridColor(new java.awt.Color(0, 0, 0));
@@ -428,16 +428,16 @@ public void currentDate(){
         jScrollPane14.setBounds(20, 70, 640, 110);
 
         jTable15.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"3", null, null},//C3
-                {"4", null, null},
-                {"6", null, null},
-                {"7", null, null},
-                {"8", null, null}
-            },
-            new String [] {
-                "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
-            }
+                new Object [][] {
+                        {"3", null, null},//C3
+                        {"4", null, null},
+                        {"6", null, null},
+                        {"7", null, null},
+                        {"8", null, null}
+                },
+                new String [] {
+                        "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
+                }
         ));
         jTable15.setCellSelectionEnabled(true);
         jTable15.setGridColor(new java.awt.Color(0, 0, 0));
@@ -448,16 +448,16 @@ public void currentDate(){
         jScrollPane15.setBounds(20, 370, 640, 110);
 
         jTable16.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"3", null, null},//C5
-                {"5", null, null},
-                {"7", null, null},
-                    {"8", null, null},
-                {"9", null, null}
-            },
-            new String [] {
-                "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
-            }
+                new Object [][] {
+                        {"3", null, null},//C5
+                        {"5", null, null},
+                        {"7", null, null},
+                        {"8", null, null},
+                        {"9", null, null}
+                },
+                new String [] {
+                        "Piece Type", "Quantity Produced by Machine Type 1", "Quantity Produced by Machine Type 2"
+                }
         ));
         jTable16.setCellSelectionEnabled(true);
         jTable16.setGridColor(new java.awt.Color(0, 0, 0));
@@ -533,9 +533,9 @@ public void currentDate(){
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
-        
-        
-        
+
+
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -548,7 +548,7 @@ public void currentDate(){
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
