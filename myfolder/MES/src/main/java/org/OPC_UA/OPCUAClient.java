@@ -65,6 +65,8 @@ public class OPCUAClient {
             writeInt16(variable, 4, String.valueOf(0));
             variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceDispatchDay[" + i + "]";
             writeInt16(variable, 4, String.valueOf(0));
+            variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceTime[" + i + "]";
+            writeInt16(variable, 4, String.valueOf(0));
         }
     }
 
@@ -109,6 +111,7 @@ public class OPCUAClient {
         for(int i=0; i<24; i++){
             String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceTime[" + i + "]";
             pieceTime[i] = readInt16(variable, 4);
+            System.out.println("Piece Time: " + pieceTime[i]);
         }
         return pieceTime;
     }
