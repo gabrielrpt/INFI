@@ -162,6 +162,29 @@ public class OPCUAClient {
         }
     }
 
+    public boolean writeInt64(String variable, int index, String value) {
+        Long longValue;
+        try {
+            longValue = Long.valueOf(value);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid number format: " + value);
+            return false;
+        }
+
+        String ID = variable;
+        NodeId nodeId = new NodeId(index, ID);
+        Variant variant = new Variant(longValue);
+        DataValue dataValue = new DataValue(variant);
+
+        try {
+            myclient.writeValue(nodeId, dataValue).get();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public int[] readWarehouseArray(String variable, int index) {
         int[] wareHouse = new int[10];
         for (int i = 0; i < 10; i++) {
@@ -248,6 +271,29 @@ public class OPCUAClient {
                 Object intValue = value.getValue().getValue();
                 if (intValue instanceof Short) {
                     return ((Short) intValue).intValue();
+                } else {
+                    throw new IllegalArgumentException("Unexpected type: " + intValue.getClass());
+                }
+            } else {
+                throw new IllegalArgumentException("Value is null");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    
+    public long readInt64(String variable, int index) {
+        String ID = variable;
+        NodeId nodeId = new NodeId(index, ID);
+        DataValue value;
+        try {
+            double maxAge = 0;
+            value = myclient.readValue(maxAge, TimestampsToReturn.Both, nodeId).get();
+            if (value != null) {
+                Object intValue = value.getValue().getValue();
+                if (intValue instanceof Long) {
+                    return ((Long) intValue).longValue();
                 } else {
                     throw new IllegalArgumentException("Unexpected type: " + intValue.getClass());
                 }
