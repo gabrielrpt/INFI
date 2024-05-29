@@ -56,6 +56,7 @@ public class ShopFloor {
         } else {
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(1));
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(1));
+            System.out.println("Timing=1");
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
                 client.writeOffset(1, true);
@@ -137,6 +138,7 @@ public class ShopFloor {
                                 client.writeWarehouseArray(2, piece, client.getPieceQuantity(piece, 2) - 1);
                                 client.writeWarehouseArray(2, 0, client.getPieceQuantity(0, 2) - 1);
                                 client.writeWOutPiece(piece, convNumber);
+                                updateStats();
                                 PxQuantity--;
                                 batch++;
                                 remainingQuantity--;
@@ -200,7 +202,6 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece2, 7);
                 checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 3);
                 unfinishedPieces--;
-                updateStats();
                 try {
                     Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
@@ -216,7 +217,6 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece2, 9);
                 checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 4);
                 unfinishedPieces--;
-                updateStats();
                 try {
                     Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
@@ -231,7 +231,6 @@ public class ShopFloor {
                 client.writeMOutPiece(outPiece2, 11);
                 checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 5);
                 unfinishedPieces--;
-                updateStats();
                 try {
                     Thread.sleep(2000); // Sleep for 60 seconds
                 } catch (InterruptedException e) {
@@ -254,7 +253,6 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 7);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 3);
                     quantity--;
-                    updateStats();
                     try {
                         Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
@@ -269,7 +267,6 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 9);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 4);
                     quantity--;
-                    updateStats();
                     try {
                         Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
@@ -284,7 +281,6 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 11);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 5);
                     quantity--;
-                    updateStats();
                     try {
                         Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
@@ -301,7 +297,6 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 1);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 0);
                     quantity--;
-                    updateStats();
                     try {
                         Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
@@ -316,7 +311,6 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 3);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 1);
                     quantity--;
-                    updateStats();
                     try {
                         Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
@@ -331,7 +325,6 @@ public class ShopFloor {
                     client.writeMOutPiece(outPiece1, 5);
                     checkAndExtractPX(1, new AtomicInteger(0), inPiece1, 2);
                     quantity--;
-                    updateStats();
                     try {
                         Thread.sleep(2000); // Sleep for 60 seconds
                     } catch (InterruptedException e) {
