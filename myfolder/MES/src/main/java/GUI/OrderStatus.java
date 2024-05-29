@@ -72,7 +72,6 @@ public class OrderStatus extends javax.swing.JFrame{
                     client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces[" + i + "]", 4, String.valueOf(0));
                     break;
                 } else {
-                    System.out.println("Atualiza os valores");
                     client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + i + "]", 4,
                             String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + (i + 1) + "]", 4)));
                     client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + i + "]", 4,
@@ -103,7 +102,6 @@ public class OrderStatus extends javax.swing.JFrame{
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         for(int i=0; i<model.getRowCount(); i++){
             if (model.getValueAt(i, 0)== null && client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4) != 0){
-                System.out.println("OrderStatus");
                 model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4), i, 0);
                 model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.CompletedPieces["+i+"]",4),  i, 1);
                 model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]",4), i, 2);
