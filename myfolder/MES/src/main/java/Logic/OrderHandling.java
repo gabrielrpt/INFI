@@ -19,9 +19,9 @@ public class OrderHandling {
 
     public void getOrdersByProdDay(int prodDay, List<Orders> orderList) {
         try {
-            boolean flag = true;
             ResultSet rs = javaDatabase.getOrdersByProdDay(prodDay);
             while (rs.next()) {
+                boolean flag= true;
                 String orderNumber = rs.getString("ordernumber");
                 String workPiece = rs.getString("workpiece");
                 int quantity = rs.getInt("quantity");
@@ -47,6 +47,17 @@ public class OrderHandling {
                 if (flag) {
                     Orders order = new Orders(orderNumber, workPiece, rawPiece, quantity, dueDate, latePenalty, earlyPenalty, productionDay);
                     orderList.add(order);
+                    for (int i=0; i<11; i++){
+                        if (String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + i + "]", 4)).equals(order.getOrderNumber())){
+                            break;
+                        }
+                        else if(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4)==0){
+                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4, order.getOrderNumber());
+                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]", 4, String.valueOf(order.getQuantity()));
+                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.DueDate["+i+"]", 4, String.valueOf(order.getProductionDay()));
+                            break;
+                        }
+                    }
                 }
             }
         } catch (SQLException e) {

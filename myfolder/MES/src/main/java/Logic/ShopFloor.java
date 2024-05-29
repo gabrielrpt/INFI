@@ -22,8 +22,16 @@ public class ShopFloor {
         AtomicInteger current = new AtomicInteger(0);
         int  outPiece2;
 
+        try {
+            Thread.sleep(2000); // Pausa por 2 segundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (rawPiece.equals("P1")) {
             System.out.println("Processing order for P1 pieces");
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(1));
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(1));
+            System.out.println("Timing=1");
             client.writeOffset(1, true);
             // Start a new thread for transformP1toP4
             new Thread(() -> transformP1toP4(quantity, 1, 3, 3, 4)).start();
@@ -47,6 +55,9 @@ public class ShopFloor {
             allPiecesCompleted();
 
         } else {
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(1));
+            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(1));
+            System.out.println("Timing=1");
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
                 client.writeOffset(1, true);
@@ -125,10 +136,6 @@ public class ShopFloor {
                         int batch = 0;
                         while(result>0){
                             while(PxQuantity > 0 && batch<6) {
-                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[0]", 4, String.valueOf(piece));
-                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[1]", 4, String.valueOf(piece));
-                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[2]", 4, String.valueOf(piece));
-                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[3]", 4, String.valueOf(piece));
                                 client.writeWarehouseArray(2, piece, client.getPieceQuantity(piece, 2) - 1);
                                 client.writeWarehouseArray(2, 0, client.getPieceQuantity(0, 2) - 1);
                                 client.writeWOutPiece(piece, convNumber);
