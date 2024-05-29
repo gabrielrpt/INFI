@@ -31,7 +31,6 @@ public class ShopFloor {
             System.out.println("Processing order for P1 pieces");
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(1));
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(1));
-            System.out.println("Timing=1");
             client.writeOffset(1, true);
             // Start a new thread for transformP1toP4
             new Thread(() -> transformP1toP4(quantity, 1, 3, 3, 4)).start();
@@ -57,7 +56,6 @@ public class ShopFloor {
         } else {
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(1));
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(1));
-            System.out.println("Timing=1");
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
                 client.writeOffset(1, true);
