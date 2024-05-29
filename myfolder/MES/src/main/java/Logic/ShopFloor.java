@@ -128,6 +128,10 @@ public class ShopFloor {
             while (remainingQuantity > 0) {
                 if(piece == 5 || piece == 6 || piece == 7 || piece == 9){
                     // Implement this method to check the warehouse for P4 pieces and extract them
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[0]", 4, String.valueOf(piece));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[1]", 4, String.valueOf(piece));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[2]", 4, String.valueOf(piece));
+                    client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece[3]", 4, String.valueOf(piece));
                     int PxQuantity = client.getPieceQuantity(piece, 2);
                     if (PxQuantity == remainingQuantity) {
                         int result = (int) Math.ceil((double) PxQuantity / 6);
@@ -139,7 +143,6 @@ public class ShopFloor {
                                 client.writeWarehouseArray(2, 0, client.getPieceQuantity(0, 2) - 1);
                                 client.writeWOutPiece(piece, convNumber);
                                 updateStats();
-                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece["+batch+"]", 4, String.valueOf(piece));
                                 PxQuantity--;
                                 batch++;
                                 remainingQuantity--;
