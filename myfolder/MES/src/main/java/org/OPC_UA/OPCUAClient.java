@@ -106,11 +106,11 @@ public class OPCUAClient {
         }
     }
 
-    public int [] readPieceTimes() {
-        int [] pieceTime = new int[24];
+    public long [] readPieceTimes() {
+        long [] pieceTime = new long[24];
         for(int i=0; i<24; i++){
             String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.PieceTime[" + i + "]";
-            pieceTime[i] = readInt16(variable, 4);
+            pieceTime[i] = readInt64(variable, 4);
             System.out.println("Piece Time: " + pieceTime[i]);
         }
         return pieceTime;
@@ -282,7 +282,7 @@ public class OPCUAClient {
             return 0;
         }
     }
-    
+
     public long readInt64(String variable, int index) {
         String ID = variable;
         NodeId nodeId = new NodeId(index, ID);
@@ -310,7 +310,7 @@ public class OPCUAClient {
 
 
 
-// isto e para teste, depois apagar main
+    // isto e para teste, depois apagar main
     public static void main(String[] args) {
         OPCUAClient client = new OPCUAClient();
         client.connect("opc.tcp://localhost:4840");  // replace with your OPC UA server's endpoint URL
