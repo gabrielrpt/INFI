@@ -31,7 +31,7 @@ public class ShopFloor {
             System.out.println("Processing order for P1 pieces");
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.StartedTimer", 4, String.valueOf(1));
             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Timing", 4, String.valueOf(1));
-            client.writeOffset(1, true);
+            client.writeOffset(1, true, 0);
             // Start a new thread for transformP1toP4
             new Thread(() -> transformP1toP4(quantity, 1, 3, 3, 4)).start();
             // Start a new thread for checkAndExtractP4
@@ -40,8 +40,14 @@ public class ShopFloor {
                 //Wait for the transformation to finish
                 if(current.get() == quantity){
                     System.out.println("All P1 pieces have been transformed to P4");
-                    client.writeOffset(1, true);
-                    break;
+                    if(finalPiece == 5) {
+                        client.writeOffset(1, true, 3);
+                        break;
+                    } else {
+                        client.writeOffset(1, true, 0);
+                        break;
+                    }
+
                 }
             }
             transformP4toFinal(quantity, 4, finalPiece);
@@ -59,11 +65,11 @@ public class ShopFloor {
             System.out.println("Timing=1");
             outPiece2 = workPiece.equals("P7") ? 7 : 9;
             if(outPiece2 == 7) {
-                client.writeOffset(1, true);
+                client.writeOffset(1, true, 3);
                 transformP2toP7(quantity, 2, 8, 8, outPiece2);
                 checkAndExtractPX(quantity, current, finalPiece, 99);
             } else {
-                client.writeOffset(0, true);
+                client.writeOffset(0, true, 3);
                 // Start a new thread for transformP2toP8
                 new Thread(() -> transformPXtoPX(quantity, 2,8)).start();
                 // Start a new thread for checkAndExtractP4
@@ -72,7 +78,7 @@ public class ShopFloor {
                     //Wait for the transformation to finish
                     if(current.get() == quantity){
                         System.out.println("All P2 pieces have been transformed to P8");
-                        client.writeOffset(1, true);
+                        client.writeOffset(1, true, 3);
                         break;
                     }
                 }

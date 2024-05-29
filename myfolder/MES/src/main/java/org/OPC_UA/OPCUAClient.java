@@ -76,7 +76,7 @@ public class OPCUAClient {
         writeInt16(variable, 4, String.valueOf(inPiece));
     }
 
-    public void writeOffset(int firstIndex, boolean resetPieces) {
+    public void writeOffset(int firstIndex, boolean resetPieces, int initCell) {
         for(int i=1; i<7; i++){
             String variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".first_index";
             writeInt16(variable, 4, String.valueOf(firstIndex));
@@ -84,7 +84,7 @@ public class OPCUAClient {
             writeInt16(variable, 4, String.valueOf(firstIndex));
         }
         if(resetPieces){
-            if(firstIndex == 1) {
+            if(firstIndex == 0) {
                 for (int i = 1; i < 7; i++) {
                     String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.SupplyPieceNumber";
                     writeInt16(variable, 4, String.valueOf(0));
@@ -94,14 +94,27 @@ public class OPCUAClient {
                     writeInt16(variable, 4, String.valueOf(i-1));
                 }
             } else {
-                for (int i = 4; i < 7; i++) {
-                    String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.SupplyPieceNumber";
-                    writeInt16(variable, 4, String.valueOf(0));
-                    variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".pieceNumber";
-                    writeInt16(variable, 4, String.valueOf(i-4));
-                    variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M2" + i + ".pieceNumber";
-                    writeInt16(variable, 4, String.valueOf(i-4));
+                if(initCell == 3){
+                    for (int i = 4; i < 7; i++) {
+                        String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.SupplyPieceNumber";
+                        writeInt16(variable, 4, String.valueOf(0));
+                        variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".pieceNumber";
+                        writeInt16(variable, 4, String.valueOf(i-4));
+                        variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M2" + i + ".pieceNumber";
+                        writeInt16(variable, 4, String.valueOf(i-4));
+                    }
                 }
+                else if(initCell == 0){
+                    for (int i = 1; i < 4; i++) {
+                        String variable = "|var|CODESYS Control Win V3 x64.Application.GVL.SupplyPieceNumber";
+                        writeInt16(variable, 4, String.valueOf(0));
+                        variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M1" + i + ".pieceNumber";
+                        writeInt16(variable, 4, String.valueOf(i-1));
+                        variable = "|var|CODESYS Control Win V3 x64.Application.PLC_PRG.M2" + i + ".pieceNumber";
+                        writeInt16(variable, 4, String.valueOf(i-1));
+                    }
+                }
+
             }
         }
     }
