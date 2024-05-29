@@ -100,7 +100,7 @@ public class javaDatabase {
             return newEntry(SQLQuery, databaseUrl, user, password);
         }
 
-        public static void setPieceInfo(int [] pieceTimes, int [] pieceAD, int [] pieceDD, String orderid){
+        public static void setPieceInfo(long [] pieceTimes, int [] pieceAD, int [] pieceDD, String orderid){
             for (int i = 0; i < pieceAD.length; i++) {
                 if(pieceDD[i] == 0){
                     break;
