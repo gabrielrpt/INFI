@@ -139,6 +139,7 @@ public class ShopFloor {
                                 client.writeWarehouseArray(2, 0, client.getPieceQuantity(0, 2) - 1);
                                 client.writeWOutPiece(piece, convNumber);
                                 updateStats();
+                                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.UOutPiece["+batch+"]", 4, String.valueOf(piece));
                                 PxQuantity--;
                                 batch++;
                                 remainingQuantity--;
