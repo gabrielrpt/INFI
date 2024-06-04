@@ -56,6 +56,7 @@ public class OrderStatus extends javax.swing.JFrame{
             orderCompletedUpdates();
             createOrderStatus();
             firstOrderUpdate();
+            updateOrder();
         });
     }
 
@@ -107,6 +108,40 @@ public class OrderStatus extends javax.swing.JFrame{
                 model.setValueAt(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]",4), i, 2);
                 model.setValueAt(0, i, 3);
                 model.setValueAt("Waiting", i, 4);
+            }
+        }
+    }
+
+    public void updateOrder(){
+        for (int i=0; i<11; i++) {
+            int dif, bigDif = 0, aux = 0;
+            int auxOrderId, auxPendingPieces, auxProductionDay;
+            for (int j = i + 1; j < 11; j++) {
+                if (client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + j + "]", 4) == 0) {
+                    break;
+                }
+                dif = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + i + "]", 4) -
+                        client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + j + "]", 4);
+                if (dif > bigDif) {
+                    bigDif = dif;
+                    aux = j;
+                }
+            }
+            if (aux != 0) {
+                auxOrderId = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + aux + "]", 4);
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + aux + "]", 4,
+                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + i + "]", 4)));
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId[" + i + "]", 4, String.valueOf(auxOrderId));
+
+                auxPendingPieces = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + aux + "]", 4);
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + aux + "]", 4,
+                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + i + "]", 4)));
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces[" + i + "]", 4, String.valueOf(auxPendingPieces));
+
+                auxProductionDay = client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + aux + "]", 4);
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + aux + "]", 4,
+                        String.valueOf(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + i + "]", 4)));
+                client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay[" + i + "]", 4, String.valueOf(auxProductionDay));
             }
         }
     }

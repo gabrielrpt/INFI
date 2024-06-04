@@ -577,5 +577,3 @@ public class ShopFloor {
         client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.Completed", 4, String.valueOf(1));
     }
 }
-
-

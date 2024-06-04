@@ -54,6 +54,7 @@ public class OrderHandling {
                         else if(client.readInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4)==0){
                             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.OrderId["+i+"]", 4, order.getOrderNumber());
                             client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.PendingPieces["+i+"]", 4, String.valueOf(order.getQuantity()));
+                            client.writeInt16("|var|CODESYS Control Win V3 x64.Application.GVL.ProductionDay["+i+"]", 4, String.valueOf(order.getProductionDay()));
                             break;
                         }
                     }
